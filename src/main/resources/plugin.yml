@@ -1,0 +1,15 @@
+name: BedWars
+version: 0.0.1
+main: com.panda0day.bedwars.Main
+api-version: 1.21
+description: A BedWars spigot plugin for Minecraft 1.21.4
+author: Panda0day
+
+commands:
+  forcestart:
+    description: Force Starts a Game not depending on minimum players
+    usage: /forcestart
+  admintp:
+    description: Admin TP to the Game BedWars Island
+    usage: /admintp
+
