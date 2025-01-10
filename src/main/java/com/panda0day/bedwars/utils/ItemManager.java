@@ -50,6 +50,15 @@ public class ItemManager {
         this.itemStack.setItemMeta(itemMeta);
     }
 
+    public ItemStack getItemStack() {
+        return itemStack;
+    }
+
+    public ItemManager setAmount(int amount) {
+        itemStack.setAmount(amount);
+        return this;
+    };
+
     public ItemStack create() {
         return this.itemStack;
     }

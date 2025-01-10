@@ -1,6 +1,7 @@
 package com.panda0day.bedwars.events;
 
 import com.panda0day.bedwars.Main;
+import com.panda0day.bedwars.shop.ShopInventoryInteract;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,5 +20,7 @@ public class ItemClick implements Listener {
             Inventory inventory = event.getClickedInventory();
         }
 
+        ShopInventoryInteract.onShopInventoryInteract(event);
+        ShopInventoryInteract.onBlocksInventoryInteract(event);
     }
 }
