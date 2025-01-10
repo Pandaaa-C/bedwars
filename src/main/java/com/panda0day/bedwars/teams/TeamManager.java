@@ -1,17 +1,16 @@
 package com.panda0day.bedwars.teams;
 
 import com.panda0day.bedwars.Main;
+import com.panda0day.bedwars.map.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class TeamManager {
     private final List<Team> teams;
@@ -29,8 +28,11 @@ public class TeamManager {
                 String name = resultSet.getString("name");
                 String teamName = resultSet.getString("team_name");
                 String color = resultSet.getString("color");
+                Maps map = Main.getMapManager().getMap(resultSet.getString("map"));
+                if (map == null) continue;
+
                 Location spawnLocation = new Location(
-                        Bukkit.getWorld("world"), // TODO: add different map names
+                        Bukkit.getWorld(map.getMapWorld()),
                         resultSet.getDouble("spawnX"),
                         resultSet.getDouble("spawnY"),
                         resultSet.getDouble("spawnZ"),
@@ -39,7 +41,7 @@ public class TeamManager {
                 );
 
                 Location shopLocation = new Location(
-                        Bukkit.getWorld("world"),
+                        Bukkit.getWorld(map.getMapWorld()),
                         resultSet.getDouble("shopX"),
                         resultSet.getDouble("shopY"),
                         resultSet.getDouble("shopZ"),
@@ -51,7 +53,7 @@ public class TeamManager {
                         name,
                         name,
                         teamName,
-                        ChatColor.getByChar(color),
+                        ChatColor.getByChar(color.replace("§", "")),
                         spawnLocation,
                         Material.getMaterial(resultSet.getString("material")),
                         shopLocation
@@ -66,7 +68,7 @@ public class TeamManager {
 
     public Team getTeamByName(String name) {
         for (Team team : teams) {
-            if (team.getName().equalsIgnoreCase(name)) {
+            if (team.getName().equalsIgnoreCase(name) || team.getTeamName().equalsIgnoreCase(name)) {
                 return team;
             }
         }
@@ -95,7 +97,7 @@ public class TeamManager {
 
     public void assignPlayerToTeam(Player player) {
         for (Team team : teams) {
-            if (team.getPlayers().size() < Main.getGameConfig().getMaximumPerTeam()) {
+            if (team.getPlayers().size() < Main.getGameStateManager().getMaximumPlayers()) {
                 team.addPlayer(player);
                 player.sendMessage(ChatColor.GREEN + "You have been assigned to the " + team.getColor() + team.getName() + ChatColor.GREEN + " team.");
                 return;
@@ -103,9 +105,13 @@ public class TeamManager {
         }
     }
 
-    public void updateTeam(Team team) {
-        teams.remove(team);
-        teams.add(team);
+    public void updateTeam(Team updatedTeam) {
+        for (int i = 0; i < teams.size(); i++) {
+            if (teams.get(i).getName().equals(updatedTeam.getName())) {
+                teams.set(i, updatedTeam);
+                return;
+            }
+        }
     }
 
     public String capitalizeFirstLetter(String input) {
@@ -114,6 +120,33 @@ public class TeamManager {
         }
 
         return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
+    }
+
+    public static void createDefaultTables() {
+        Main.getDatabase().createTable("""
+                CREATE TABLE IF NOT EXISTS teams (
+                     id INT AUTO_INCREMENT PRIMARY KEY,
+                     name VARCHAR(255) NOT NULL UNIQUE,
+                     team_name VARCHAR(255) NOT NULL,
+                     map VARCHAR(255) NOT NULL,
+                     color VARCHAR(255) NOT NULL,
+                     material VARCHAR(255) NOT NULL,
+                     spawnX DOUBLE NOT NULL,
+                     spawnY DOUBLE NOT NULL,
+                     spawnZ DOUBLE NOT NULL,
+                     spawnYaw FLOAT NOT NULL,
+                     spawnPitch FLOAT NOT NULL,
+                     shopX DOUBLE NOT NULL,
+                     shopY DOUBLE NOT NULL,
+                     shopZ DOUBLE NOT NULL,
+                     shopYaw FLOAT NOT NULL,
+                     shopPitch FLOAT NOT NULL
+                 )
+                """);
+    }
+
+    public List<Team> getAllTeams() {
+        return this.teams;
     }
 }
 

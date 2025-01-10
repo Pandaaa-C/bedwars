@@ -12,7 +12,7 @@ public class BlockDestroy implements Listener {
     @EventHandler
     public void onBlockDestroy(BlockBreakEvent event) {
         World world = event.getPlayer().getWorld();
-        if (!world.getName().equals(Main.getGameConfig().getWorldName()))
+        if (!world.getName().equals(Main.getGameStateManager().getCurrentMap().getMapWorld()))
             event.setCancelled(event.getPlayer().getGameMode() == GameMode.CREATIVE);
     }
 }

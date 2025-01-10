@@ -7,6 +7,7 @@ import com.panda0day.bedwars.teams.TeamManager;
 import com.panda0day.bedwars.configs.MainConfig;
 import com.panda0day.bedwars.utils.Database;
 import com.panda0day.bedwars.utils.LocationManager;
+import com.panda0day.bedwars.utils.MapManager;
 import com.panda0day.bedwars.utils.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,10 +28,10 @@ public class Main extends JavaPlugin {
     // Configs
     private static MainConfig _mainConfig;
     private static DatabaseConfig _databaseConfig;
-    private static GameConfig _gameConfig;
 
     // Managers
     private static final WorldManager worldManager = new WorldManager();
+    private static MapManager mapManager;
     private static GameStateManager gameStateManager;
     private static TeamManager teamManager;
 
@@ -41,7 +42,6 @@ public class Main extends JavaPlugin {
 
         _mainConfig = new MainConfig(this);
         _databaseConfig = new DatabaseConfig("mysql.yml");
-        _gameConfig = new GameConfig("game.yml");
 
         _database = new Database(
                 getDatabaseConfig().getHost(),
@@ -51,9 +51,17 @@ public class Main extends JavaPlugin {
                 getDatabaseConfig().getDatabase());
         _database.connect();
 
+        mapManager = new MapManager();
         teamManager = new TeamManager();
         gameStateManager = new GameStateManager();
         gameStateManager.setCurrentGameState(GameState.LOBBY);
+
+        Location location = LocationManager.getLocation("spawn");
+        if (location == null || location.getWorld() == null) return;
+
+        worldManager.loadWorld(location.getWorld().getName());
+        worldManager.checkAndRestoreBackup(gameStateManager.getCurrentMap().getMapWorld(), gameStateManager.getCurrentMap().getMapWorld() + "_backup");
+        worldManager.loadWorld(gameStateManager.getCurrentMap().getMapWorld());
 
         try {
             registerEventListenerClasses();
@@ -61,13 +69,6 @@ public class Main extends JavaPlugin {
         } catch (Exception exception) {
             System.err.println(exception.getMessage());
         }
-
-        Location location = LocationManager.getLocation("spawn");
-        if (location == null || location.getWorld() == null) return;
-        worldManager.loadWorld(location.getWorld().getName());
-        // TODO: add logic for games to be fetched from database, allow multiple games (different maps etc.) and add them to these methods
-        /*worldManager.checkAndRestoreBackup(Main.getGameConfig().getFileConfiguration().getString("map_world"), Main.getGameConfig().getFileConfiguration().getString("map_world") + "_backup");
-        worldManager.loadWorld(Main.getGameConfig().getFileConfiguration().getString("map_world"));*/
     }
 
     @Override
@@ -134,15 +135,15 @@ public class Main extends JavaPlugin {
         return _mainConfig;
     }
 
-    public static GameConfig getGameConfig() {
-        return _gameConfig;
-    }
-
     public static DatabaseConfig getDatabaseConfig() {
         return _databaseConfig;
     }
 
     public static Database getDatabase() {
         return _database;
+    }
+
+    public static MapManager getMapManager() {
+        return mapManager;
     }
 }

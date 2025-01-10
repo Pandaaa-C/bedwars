@@ -14,10 +14,8 @@ public class ItemClick implements Listener {
     @EventHandler
     public void onItemClickChange(InventoryClickEvent event) {
         World world = event.getWhoClicked().getWorld();
-        if (!world.getName().equals(Main.getGameConfig().getWorldName())) {
+        if (!world.getName().equals(Main.getGameStateManager().getCurrentMap().getMapWorld())) {
             event.setCancelled(true);
-
-            Inventory inventory = event.getClickedInventory();
         }
 
         ShopInventoryInteract.onShopInventoryInteract(event);

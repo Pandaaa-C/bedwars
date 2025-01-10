@@ -13,7 +13,11 @@ public class LocationManager {
         try {
             ResultSet resultSet = Main.getDatabase().executeQuery("SELECT * FROM locations WHERE name = ?;", name);
             while (resultSet.next()) {
-                World world = Bukkit.getWorld(resultSet.getString("world"));
+                String worldName = resultSet.getString("world");
+                if (!Main.getWorldManager().isWorldLoaded(worldName)) {
+                    Main.getWorldManager().loadWorld(worldName);
+                }
+                World world = Bukkit.getWorld(worldName);
                 double x = resultSet.getDouble("x");
                 double y = resultSet.getDouble("y");
                 double z = resultSet.getDouble("z");

@@ -10,7 +10,7 @@ public class ItemDrop implements Listener {
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
         World world = event.getPlayer().getWorld();
-        if (!world.getName().equals(Main.getGameConfig().getWorldName()))
+        if (!world.getName().equals(Main.getGameStateManager().getCurrentMap().getMapWorld()))
             event.setCancelled(true);
     }
 }

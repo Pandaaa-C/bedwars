@@ -3,9 +3,6 @@ package com.panda0day.bedwars.events;
 import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.game.GameState;
 import com.panda0day.bedwars.teams.Team;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,15 +16,8 @@ public class PlayerRespawn implements Listener {
         Player player = event.getPlayer();
         Team team = Main.getTeamManager().getTeamFromPlayer(player);
         if (team == null) return;
-        World world = Bukkit.getWorld(Main.getGameConfig().getWorldName());
-        Location location = new Location(
-                world,
-                team.getSpawnLocation().getX(),
-                team.getSpawnLocation().getY(),
-                team.getSpawnLocation().getZ(),
-                team.getSpawnLocation().getYaw(),
-                team.getSpawnLocation().getPitch()
-        );
-        event.setRespawnLocation(location);
+
+        event.setRespawnLocation(team.getSpawnLocation());
+        player.teleport(team.getSpawnLocation());
     }
 }

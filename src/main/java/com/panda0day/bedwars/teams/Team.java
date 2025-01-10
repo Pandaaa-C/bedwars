@@ -47,7 +47,7 @@ public class Team {
     }
 
     public List<Player> getPlayers() {
-        return players;
+        return this.players;
     }
 
     public ChatColor getColor() {
@@ -63,9 +63,9 @@ public class Team {
     }
 
     public void addPlayer(Player player) {
-        if (players.size() < Main.getGameConfig().getMaximumPerTeam()) {
+        if (players.size() < Main.getGameStateManager().getMaximumPlayers()) {
             players.add(player);
-            player.sendMessage(Main.getMainConfig().getPrefix() + "You have joined Team " + getColor() + getName());
+            player.sendMessage(Main.getMainConfig().getPrefix() + "You have joined " + getColor() + getTeamName());
         }
     }
 
@@ -74,10 +74,10 @@ public class Team {
     }
 
     public boolean isFull() {
-        return players.size() >= Main.getGameConfig().getMaximumPerTeam();
+        return players.size() >= Main.getGameStateManager().getCurrentMap().getMaxPlayersPerTeam();
     }
 
     public boolean hasSpace() {
-        return players.size() < Main.getGameConfig().getMaximumPerTeam();
+        return players.size() < Main.getGameStateManager().getCurrentMap().getMaxPlayersPerTeam();
     }
 }

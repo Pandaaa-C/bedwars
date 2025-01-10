@@ -1,12 +1,12 @@
 package com.panda0day.bedwars.game;
 
 import com.panda0day.bedwars.Main;
+import com.panda0day.bedwars.spawnables.Spawnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.ResultSet;
@@ -14,29 +14,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameResourceSpawner {
-    private final JavaPlugin plugin;
-
-    public GameResourceSpawner(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public void startSpawning(Material material, long ticks) {
+    public void startSpawning(Spawnable spawnable) {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for (Location location : getLocations()) {
-                    World world = location.getWorld();
-                    if (world != null) {
-                        world.dropItemNaturally(location, new ItemStack(material));
-                    }
+                World world = spawnable.getLocation().getWorld();
+                if (world != null) {
+                    world.dropItemNaturally(spawnable.getLocation(), new ItemStack(spawnable.getMaterial()));
                 }
             }
-        }.runTaskTimer(plugin, 0L, ticks);
+        }.runTaskTimer(Main.getInstance(), 0L, spawnable.getTick() * 20L);
     }
 
-    public List<Location> getLocations() {
-        ResultSet resultSet = Main.getDatabase().executeQuery("SELECT * FROM spawnables");
-        List<Location> locations = new ArrayList<>();
+    public List<Spawnable> getLocations() {
+        ResultSet resultSet = Main.getDatabase().executeQuery("SELECT * FROM spawnables;");
+        List<Spawnable> spawnable = new ArrayList<>();
 
         try {
             while (resultSet.next()) {
@@ -44,10 +36,14 @@ public class GameResourceSpawner {
                 double x = resultSet.getDouble("x");
                 double y = resultSet.getDouble("y");
                 double z = resultSet.getDouble("z");
-                locations.add(new Location(world, x, y, z));
+                spawnable.add(new Spawnable(
+                        resultSet.getInt("tick"),
+                        Material.getMaterial(resultSet.getString("material")),
+                        new Location(world, x, y, z)
+                ));
             }
 
-            return locations;
+            return spawnable;
         } catch (Exception exception) {
             Main.getInstance().getLogger().info(exception.getMessage());
         }
@@ -56,6 +52,16 @@ public class GameResourceSpawner {
     }
 
     public static void createDefaultTables() {
-
+        Main.getDatabase().createTable("""
+                CREATE TABLE IF NOT EXISTS spawnables (
+                     id INT AUTO_INCREMENT PRIMARY KEY,
+                     material VARCHAR(255) NOT NULL UNIQUE,
+                     world VARCHAR(255) NOT NULL,
+                     tick INT(32) NOT NULL,
+                     x DOUBLE NOT NULL,
+                     y DOUBLE NOT NULL,
+                     z DOUBLE NOT NULL
+                 )
+                """);
     }
 }

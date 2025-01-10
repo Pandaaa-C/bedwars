@@ -1,23 +1,23 @@
 package com.panda0day.bedwars.game;
 
 import com.panda0day.bedwars.Main;
+import com.panda0day.bedwars.map.Maps;
+import com.panda0day.bedwars.spawnables.Spawnable;
 import com.panda0day.bedwars.teams.Team;
 import com.panda0day.bedwars.utils.EntitySpawner;
 import org.bukkit.*;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
 public class GameStateManager {
-    private String gameName;
+    private final Maps currentMap;
     private GameState currentGameState = GameState.LOBBY;
     private final Set<Player> players = new HashSet<>();
     private final int minimumPlayers;
@@ -25,10 +25,10 @@ public class GameStateManager {
     private int countdown;
 
     public GameStateManager() {
-        this.gameName = "game";
-        minimumPlayers = Main.getGameConfig().getMinimumPlayers();
-        maximumPlayers = Main.getGameConfig().getMaximumPlayers();
-        countdown = Main.getGameConfig().getCountdownTime();
+        this.currentMap = Main.getMapManager().getRandomMap();
+        minimumPlayers = this.currentMap.getMinimumPlayers();
+        maximumPlayers = this.currentMap.getMaximumPlayers();
+        countdown = this.currentMap.getCountdown();
     }
 
     public void checkForGameStart() {
@@ -57,7 +57,7 @@ public class GameStateManager {
 
     private void startGame() {
         setCurrentGameState(GameState.GAME);
-        Main.getWorldManager().loadWorld(Main.getGameConfig().getFileConfiguration().getString("map_world"));
+        Main.getWorldManager().loadWorld(this.currentMap.getMapWorld());
 
         Bukkit.getOnlinePlayers().forEach(player -> {
             Team team = Main.getTeamManager().getTeamFromPlayer(player);
@@ -66,7 +66,7 @@ public class GameStateManager {
                 return;
             }
 
-            World world = Bukkit.getWorld(Main.getGameConfig().getFileConfiguration().getString("map_world"));
+            World world = Bukkit.getWorld(this.currentMap.getMapWorld());
             Location location = new Location(
                     world,
                     team.getSpawnLocation().getX(),
@@ -86,10 +86,10 @@ public class GameStateManager {
         });
 
 
-        GameResourceSpawner resourceSpawner = new GameResourceSpawner(Main.getInstance());
-        resourceSpawner.startSpawning(Material.BRICK, 20L * 2);
-        resourceSpawner.startSpawning(Material.IRON_INGOT, 20L * 6);
-        resourceSpawner.startSpawning(Material.GOLD_INGOT, 20L * 20);
+        GameResourceSpawner resourceSpawner = new GameResourceSpawner();
+        for (Spawnable spawnable : resourceSpawner.getLocations()) {
+            resourceSpawner.startSpawning(spawnable);
+        }
 
         spawnShopVillagers();
     }
@@ -131,5 +131,9 @@ public class GameStateManager {
 
     public GameState getCurrentGameState() {
         return currentGameState;
+    }
+
+    public Maps getCurrentMap() {
+        return currentMap;
     }
 }

@@ -27,7 +27,7 @@ public class PlayerScoreboard {
         board.updateLines(
                 "",
                 ChatColor.GOLD + "Map:",
-                "» " + Main.getGameConfig().getMapName(),
+                "» " + Main.getGameStateManager().getCurrentMap().getMapName(),
                 "",
                 ChatColor.GOLD + "Team:",
                 "» " + playerTeam.getColor() + playerTeam.getName(),

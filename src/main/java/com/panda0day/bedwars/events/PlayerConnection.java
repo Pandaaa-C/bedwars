@@ -45,7 +45,7 @@ public class PlayerConnection implements Listener {
 
         player.setHealth(20);
         player.setFoodLevel(20);
-        player.setLevel(Main.getInstance().getConfig().getInt("game.countdown"));
+        player.setLevel(Main.getGameStateManager().getCurrentMap().getCountdown());
         player.setGameMode(GameMode.ADVENTURE);
 
         createDefaultInventoryItems(player);

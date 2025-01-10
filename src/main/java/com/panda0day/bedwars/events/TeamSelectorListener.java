@@ -14,14 +14,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Map;
-
 public class TeamSelectorListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         World world = event.getWhoClicked().getWorld();
-        if (world.getName().equals(Main.getGameConfig().getWorldName())) return;
+        if (world.getName().equals(Main.getGameStateManager().getCurrentMap().getMapWorld())) return;
 
         event.setCancelled(true);
 
@@ -38,9 +36,14 @@ public class TeamSelectorListener implements Listener {
         ItemMeta itemMeta = clickedItem.getItemMeta();
         if (itemMeta == null) return;
 
-        String team = itemMeta.getDisplayName();
+        String team = itemMeta.getDisplayName().substring(2);
         Team oldTeam = Main.getTeamManager().getTeamFromPlayer(player);
         Team newTeam = Main.getTeamManager().getTeamByName(team);
+        if (newTeam == null) {
+            player.sendMessage(Main.getMainConfig().getPrefix() + ChatColor.RED + "Error try restarting.");
+            return;
+        }
+
         if (oldTeam == newTeam) {
             player.sendMessage(Main.getMainConfig().getPrefix() + ChatColor.RED + "You already are in this team.");
             return;
