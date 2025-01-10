@@ -55,7 +55,7 @@ public class Main extends JavaPlugin {
 
         try {
             registerEventListenerClasses();
-            registerCommands();
+            registerCommandClasses();
         } catch (Exception exception) {
             System.err.println(exception.getMessage());
         }
@@ -91,17 +91,19 @@ public class Main extends JavaPlugin {
         }
     }
 
-    private void registerCommands() {
-        getLogger().info("Loading " + getCommandClasses() + " Commands");
-        Objects.requireNonNull(getCommand("forcestart")).setExecutor(new ForceStartCommand());
-        Objects.requireNonNull(getCommand("admintp")).setExecutor(new AdminCommand());
-    }
-
-    private int getCommandClasses() {
+    private void registerCommandClasses() throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Reflections reflections = new Reflections("com.panda0day.bedwars.commands");
         Set<Class<? extends CommandExecutor>> commandClasses = reflections.getSubTypesOf(CommandExecutor.class);
+        getLogger().info("Loading " + commandClasses.size() + " commands");
 
-        return commandClasses.size();
+        for (Class<? extends CommandExecutor> commandClass : commandClasses) {
+            CommandExecutor command = commandClass.getDeclaredConstructor().newInstance();
+            String commandName = command.getClass().getSimpleName().replace("Command", "");
+
+            Objects.requireNonNull(getCommand(commandName)).setExecutor(command);
+
+            getLogger().info("Registered command: " + commandClass.getSimpleName());
+        }
     }
 
     public static Main getInstance() {

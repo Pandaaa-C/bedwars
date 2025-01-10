@@ -9,10 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class AdminCommand implements CommandExecutor {
-    public AdminCommand() {
-        Main.getInstance().getLogger().info("Registered Command: AdminCommand");
-    }
-
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (!(commandSender instanceof Player player)) {
