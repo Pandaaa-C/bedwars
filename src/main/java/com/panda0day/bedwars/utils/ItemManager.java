@@ -8,38 +8,49 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 
 public class ItemManager {
-    public ItemManager() {}
+    private final ItemMeta itemMeta;
+    private final ItemStack itemStack;
 
-    public static ItemStack createItem(Material material, String name, List<String> lore, List<Enchantment> enchantments) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
+    public ItemManager(Material material) {
+        this.itemStack = new ItemStack(material);
+        this.itemMeta = itemStack.getItemMeta();
+    }
 
-        if (meta != null) {
-            if (name != null && !name.isEmpty()) {
-                meta.setDisplayName(name);
-            }
+    public ItemManager setDisplayName(String displayName) {
+        itemMeta.setDisplayName(displayName);
+        this.setItemMeta(itemMeta);
 
-            if (lore != null && !lore.isEmpty()) {
-                meta.setLore(lore);
-            }
+        return this;
+    }
 
-            if (enchantments != null && !enchantments.isEmpty()) {
-                for (Enchantment enchantment : enchantments) {
-                    meta.addEnchant(enchantment, 1, true);
-                }
-            }
+    public ItemManager setLore(List<String> lore) {
+        itemMeta.setLore(lore);
+        this.setItemMeta(itemMeta);
+        return this;
+    }
 
-            item.setItemMeta(meta);
+    public ItemManager addEnchantment(Enchantment enchantment, int level) {
+        itemMeta.addEnchant(enchantment, level, true);
+        this.setItemMeta(itemMeta);
+
+        return this;
+    }
+
+    public ItemManager addEnchantments(List<Enchantment> enchantments) {
+        for (Enchantment enchantment : enchantments) {
+            this.itemMeta.addEnchant(enchantment, 1, true);
         }
 
-        return item;
+        this.setItemMeta(itemMeta);
+
+        return this;
     }
 
-    public static ItemStack createItem(Material material, String name, List<String> lore) {
-        return createItem(material, name, lore, null);
+    public void setItemMeta(ItemMeta itemMeta) {
+        this.itemStack.setItemMeta(itemMeta);
     }
 
-    public static ItemStack createItem(Material material, String name) {
-        return createItem(material, name, null, null);
+    public ItemStack create() {
+        return this.itemStack;
     }
 }
