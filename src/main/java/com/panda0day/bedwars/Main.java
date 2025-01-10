@@ -28,7 +28,6 @@ public class Main extends JavaPlugin {
     private static GameConfig _gameConfig;
     private static TeamConfig _teamConfig;
     private static LobbyConfig _lobbyConfig;
-    private static SpawnablesConfig _spawnablesConfig;
 
     // Managers
     private static final WorldManager worldManager = new WorldManager();
@@ -45,7 +44,6 @@ public class Main extends JavaPlugin {
         _gameConfig = new GameConfig("game.yml");
         _teamConfig = new TeamConfig("teams.yml");
         _lobbyConfig = new LobbyConfig("lobby.yml");
-        _spawnablesConfig = new SpawnablesConfig("spawnables.yml");
 
         _database = new Database(
                 getDatabaseConfig().getHost(),
@@ -143,10 +141,6 @@ public class Main extends JavaPlugin {
 
     public static LobbyConfig getLobbyConfig() {
         return _lobbyConfig;
-    }
-
-    public static SpawnablesConfig getSpawnablesConfig() {
-        return _spawnablesConfig;
     }
 
     public static DatabaseConfig getDatabaseConfig() {
