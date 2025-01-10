@@ -3,6 +3,7 @@ package com.panda0day.bedwars.teams;
 import com.panda0day.bedwars.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -15,14 +16,16 @@ public class Team {
     private final List<Player> players;
     private final ChatColor color;
     private final Location spawnLocation;
+    private final Material material;
 
-    public Team(String identifier, String name, String teamName, ChatColor color, Location spawnLocation) {
+    public Team(String identifier, String name, String teamName, ChatColor color, Location spawnLocation, Material material) {
         this.identifier = identifier;
         this.name = name;
         this.teamName = teamName;
         this.players = new ArrayList<Player>();
         this.color = color;
         this.spawnLocation = spawnLocation;
+        this.material = material;
     }
 
     public String getName() {
@@ -31,6 +34,10 @@ public class Team {
 
     public String getTeamName() {
         return teamName;
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 
     public String getIdentifier() {

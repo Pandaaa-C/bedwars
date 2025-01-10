@@ -4,9 +4,11 @@ import com.panda0day.bedwars.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -15,33 +17,33 @@ public class TeamManager {
     private final List<Team> teams;
 
     public TeamManager() {
-        teams = new ArrayList<>();
-
-        Set<String> teamNames = Main.getTeamConfig().getTeams();
-        for (String team : teamNames) {
-            String name = Main.getTeamConfig().getFileConfiguration().getString(team + ".name");
-            String teamName = Main.getTeamConfig().getFileConfiguration().getString(team + ".team_name");
-            String chatColor = Main.getTeamConfig().getFileConfiguration().getString(team + ".color");
-            if (chatColor == null)
-                chatColor = "§f";
-
-            chatColor = chatColor.replace("§", "");
-
-            ConfigurationSection section = Main.getTeamConfig().getFileConfiguration().getConfigurationSection(team + ".spawn");
-            Location location = new Location(
-                    Bukkit.getWorld(Main.getGameConfig().getWorldName()),
-                    section.getDouble("x"),
-                    section.getDouble("y"),
-                    section.getDouble("z"),
-                    (float) section.getDouble("yaw"),
-                    (float) section.getDouble("pitch")
-            );
-
-            teams.add(new Team(team, name, teamName, ChatColor.getByChar(chatColor), location));
-        }
+        this.teams = this.getTeams();
     }
 
     public List<Team> getTeams() {
+        ResultSet  resultSet = Main.getDatabase().executeQuery("SELECT * FROM teams;");
+        List<Team> teams = new ArrayList<>();
+
+        try {
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                String teamName = resultSet.getString("team_name");
+                String color = resultSet.getString("color");
+                Location location = new Location(
+                        Bukkit.getWorld("world"), // TODO: add different map names
+                        resultSet.getDouble("spawnX"),
+                        resultSet.getDouble("spawnY"),
+                        resultSet.getDouble("spawnZ"),
+                        resultSet.getFloat("spawnYaw"),
+                        resultSet.getFloat("spawnPitch")
+                );
+
+                teams.add(new Team(name, name, teamName, ChatColor.getByChar(color), location, Material.getMaterial(resultSet.getString("material"))));
+            }
+        } catch (Exception exception) {
+            Main.getInstance().getLogger().info(exception.getMessage());
+        }
+
         return teams;
     }
 
@@ -61,6 +63,16 @@ public class TeamManager {
                 return team;
             }
         }
+        return null;
+    }
+
+    public Team getTeamByMaterial(Material material) {
+        for (Team team : teams) {
+            if (team.getMaterial() == material) {
+                return team;
+            }
+        }
+
         return null;
     }
 
