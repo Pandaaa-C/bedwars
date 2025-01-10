@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 public class GameStateManager {
+    private String gameName;
     private GameState currentGameState = GameState.LOBBY;
     private final Set<Player> players = new HashSet<>();
     private final int minimumPlayers;
@@ -24,6 +25,7 @@ public class GameStateManager {
     private int countdown;
 
     public GameStateManager() {
+        this.gameName = "game";
         minimumPlayers = Main.getGameConfig().getMinimumPlayers();
         maximumPlayers = Main.getGameConfig().getMaximumPlayers();
         countdown = Main.getGameConfig().getCountdownTime();
@@ -82,6 +84,7 @@ public class GameStateManager {
             player.setHealth(20);
             player.setFoodLevel(20);
         });
+
 
         GameResourceSpawner resourceSpawner = new GameResourceSpawner(Main.getInstance());
         resourceSpawner.startSpawning(Material.BRICK, 20L * 2);
