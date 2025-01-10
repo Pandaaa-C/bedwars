@@ -6,8 +6,10 @@ import com.panda0day.bedwars.game.GameStateManager;
 import com.panda0day.bedwars.teams.TeamManager;
 import com.panda0day.bedwars.configs.MainConfig;
 import com.panda0day.bedwars.utils.Database;
+import com.panda0day.bedwars.utils.LocationManager;
 import com.panda0day.bedwars.utils.WorldManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -60,9 +62,12 @@ public class Main extends JavaPlugin {
             System.err.println(exception.getMessage());
         }
 
-        worldManager.loadWorld(Main.getMainConfig().getLobbyWorld());
-        worldManager.checkAndRestoreBackup(Main.getGameConfig().getFileConfiguration().getString("map_world"), Main.getGameConfig().getFileConfiguration().getString("map_world") + "_backup");
-        worldManager.loadWorld(Main.getGameConfig().getFileConfiguration().getString("map_world"));
+        Location location = LocationManager.getLocation("spawn");
+        if (location == null || location.getWorld() == null) return;
+        worldManager.loadWorld(location.getWorld().getName());
+        // TODO: add logic for games to be fetched from database, allow multiple games (different maps etc.) and add them to these methods
+        /*worldManager.checkAndRestoreBackup(Main.getGameConfig().getFileConfiguration().getString("map_world"), Main.getGameConfig().getFileConfiguration().getString("map_world") + "_backup");
+        worldManager.loadWorld(Main.getGameConfig().getFileConfiguration().getString("map_world"));*/
     }
 
     @Override
@@ -70,7 +75,10 @@ public class Main extends JavaPlugin {
         kickAllPlayers("Server is reloading...");
         getLogger().info("Stopping Plugin");
 
-        worldManager.unloadWorld("spawn");
+
+        Location location = LocationManager.getLocation("spawn");
+        if (location == null || location.getWorld() == null) return;
+        worldManager.unloadWorld(location.getWorld().getName());
     }
 
     private void kickAllPlayers(String reason) {
@@ -109,7 +117,6 @@ public class Main extends JavaPlugin {
     public static Main getInstance() {
         return instance;
     }
-
 
     public static WorldManager getWorldManager() {
         return worldManager;
