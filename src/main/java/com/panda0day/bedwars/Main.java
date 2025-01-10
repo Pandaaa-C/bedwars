@@ -1,13 +1,11 @@
 package com.panda0day.bedwars;
 
-import com.panda0day.bedwars.configs.GameConfig;
-import com.panda0day.bedwars.configs.LobbyConfig;
-import com.panda0day.bedwars.configs.SpawnablesConfig;
-import com.panda0day.bedwars.configs.TeamConfig;
+import com.panda0day.bedwars.configs.*;
 import com.panda0day.bedwars.game.GameState;
 import com.panda0day.bedwars.game.GameStateManager;
 import com.panda0day.bedwars.teams.TeamManager;
 import com.panda0day.bedwars.utils.Config;
+import com.panda0day.bedwars.utils.Database;
 import com.panda0day.bedwars.utils.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -22,9 +20,11 @@ import java.util.Set;
 
 public class Main extends JavaPlugin {
     private static Main instance;
+    private static Database _database;
 
     // Configs
     private static Config _mainConfig;
+    private static DatabaseConfig _databaseConfig;
     private static GameConfig _gameConfig;
     private static TeamConfig _teamConfig;
     private static LobbyConfig _lobbyConfig;
@@ -41,10 +41,19 @@ public class Main extends JavaPlugin {
         getLogger().info("Starting Plugin");
 
         _mainConfig = new Config(this);
+        _databaseConfig = new DatabaseConfig("mysql.yml");
         _gameConfig = new GameConfig("game.yml");
         _teamConfig = new TeamConfig("teams.yml");
         _lobbyConfig = new LobbyConfig("lobby.yml");
         _spawnablesConfig = new SpawnablesConfig("spawnables.yml");
+
+        _database = new Database(
+                getDatabaseConfig().getHost(),
+                getDatabaseConfig().getUsername(),
+                getDatabaseConfig().getPassword(),
+                getDatabaseConfig().getPort(),
+                getDatabaseConfig().getDatabase());
+        _database.connect();
 
         teamManager = new TeamManager();
         gameStateManager = new GameStateManager();
@@ -140,5 +149,11 @@ public class Main extends JavaPlugin {
         return _spawnablesConfig;
     }
 
+    public static DatabaseConfig getDatabaseConfig() {
+        return _databaseConfig;
+    }
 
+    public static Database getDatabase() {
+        return _database;
+    }
 }
