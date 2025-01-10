@@ -12,4 +12,7 @@ commands:
   admin:
     description: Admin TP to the Game BedWars Island
     usage: /admin
+  setspawn:
+    description: Set the Lobby Spawn location
+    usage: /setspawn
 
