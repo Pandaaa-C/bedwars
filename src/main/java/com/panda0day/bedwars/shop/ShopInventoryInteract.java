@@ -2,8 +2,6 @@ package com.panda0day.bedwars.shop;
 
 import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.teams.Team;
-import com.panda0day.bedwars.teams.TeamManager;
-import com.panda0day.bedwars.teams.TeamSelector;
 import com.panda0day.bedwars.utils.InventoryManager;
 import com.panda0day.bedwars.utils.ItemManager;
 import org.bukkit.Material;
@@ -53,7 +51,7 @@ public class ShopInventoryInteract {
                     if (playerTeam == null) return;
 
                     playerInventory.addItem(
-                            new ItemManager(TeamSelector.getTeamWool(playerTeam.getName()))
+                            new ItemManager(playerTeam.getMaterial())
                                     .setDisplayName(playerTeam.getColor() + "Team " + playerTeam.getName())
                                     .setAmount(16)
                                     .create()

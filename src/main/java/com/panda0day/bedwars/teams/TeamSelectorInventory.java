@@ -17,16 +17,15 @@ public class TeamSelectorInventory {
     public static void openTeamSelectorInventory(Player player) {
         Inventory inventory = Bukkit.createInventory(null, 9, ChatColor.GOLD + "Team Selector");
 
-        for (String team : TeamSelector.teamWoolColours.keySet()) {
-            Team playerTeam = Main.getTeamManager().getTeamByName(team);
+        for (Team team : Main.getTeamManager().getTeams()) {
             List<String> lore = new ArrayList<>();
-            playerTeam.getPlayers().forEach(teamPlayer -> {
+            team.getPlayers().forEach(teamPlayer -> {
                 lore.add("» " +ChatColor.GOLD + teamPlayer.getName());
             });
 
             inventory.addItem(
-                    new ItemManager(TeamSelector.getTeamWool(team))
-                            .setDisplayName(playerTeam.getColor() + "Team " + playerTeam.getName())
+                    new ItemManager(team.getMaterial())
+                            .setDisplayName(team.getColor() + "Team " + team.getName())
                             .setLore(lore)
                             .create()
             );

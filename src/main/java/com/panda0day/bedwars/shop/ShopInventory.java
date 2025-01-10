@@ -2,15 +2,11 @@ package com.panda0day.bedwars.shop;
 
 import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.teams.Team;
-import com.panda0day.bedwars.teams.TeamManager;
-import com.panda0day.bedwars.teams.TeamSelector;
 import com.panda0day.bedwars.utils.ItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
@@ -21,7 +17,7 @@ public class ShopInventory {
 
         Inventory inventory = Bukkit.createInventory(null, 9 * 2, "Shop");
         inventory.addItem(
-                new ItemManager(TeamSelector.getTeamWool(team.getIdentifier()))
+                new ItemManager(team.getMaterial())
                         .setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Blocks")
                         .create()
         );
@@ -35,7 +31,7 @@ public class ShopInventory {
 
         Inventory inventory = Bukkit.createInventory(null, 9 * 2, "Blocks");
         inventory.addItem(
-                new ItemManager(TeamSelector.getTeamWool(team.getIdentifier()))
+                new ItemManager(team.getMaterial())
                         .setDisplayName(ChatColor.GOLD  + "16 Blocks")
                         .setLore(List.of(
                                 ChatColor.GREEN + "Buy 16 Blocks for",
