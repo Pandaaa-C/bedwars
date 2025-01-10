@@ -3,6 +3,7 @@ package com.panda0day.bedwars.events;
 import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.game.GameState;
 import com.panda0day.bedwars.utils.ItemManager;
+import com.panda0day.bedwars.utils.LocationManager;
 import com.panda0day.bedwars.utils.PlayerScoreboard;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -35,17 +36,12 @@ public class PlayerConnection implements Listener {
         event.setJoinMessage(Main.getMainConfig().getPrefix() + ChatColor.GREEN + "[+] " + player.getDisplayName() + " joined the bedwars!");
         player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 
-        World world = Bukkit.getWorld(Main.getLobbyConfig().getLobbyName());
-        Location location = new Location(
-                world,
-                Main.getLobbyConfig().getFileConfiguration().getDouble("x"),
-                Main.getLobbyConfig().getFileConfiguration().getDouble("y"),
-                Main.getLobbyConfig().getFileConfiguration().getDouble("z"),
-                (float) Main.getLobbyConfig().getFileConfiguration().getDouble("yaw"),
-                (float) Main.getLobbyConfig().getFileConfiguration().getDouble("pitch")
-        );
-
-        player.teleport(location);
+        if (LocationManager.doesLocationExist("spawn")) {
+            Location location = LocationManager.getLocation("spawn");
+            if (location != null) {
+                player.teleport(location);
+            }
+        }
 
         player.setHealth(20);
         player.setFoodLevel(20);
