@@ -83,14 +83,10 @@ public class GameStateManager {
             player.setFoodLevel(20);
         });
 
-        List<Location> brickLocations = Main.getSpawnablesConfig().getLocations("brick.locations");
-        List<Location> ironLocations = Main.getSpawnablesConfig().getLocations("iron.locations");
-        List<Location> goldLocations = Main.getSpawnablesConfig().getLocations("gold.locations");
-
         GameResourceSpawner resourceSpawner = new GameResourceSpawner(Main.getInstance());
-        resourceSpawner.startSpawning(Material.BRICK, brickLocations, 20L * 2);
-        resourceSpawner.startSpawning(Material.IRON_INGOT, ironLocations, 20L * 6);
-        resourceSpawner.startSpawning(Material.GOLD_INGOT, goldLocations, 20L * 20);
+        resourceSpawner.startSpawning(Material.BRICK, 20L * 2);
+        resourceSpawner.startSpawning(Material.IRON_INGOT, 20L * 6);
+        resourceSpawner.startSpawning(Material.GOLD_INGOT, 20L * 20);
 
         spawnShopVillagers();
     }
