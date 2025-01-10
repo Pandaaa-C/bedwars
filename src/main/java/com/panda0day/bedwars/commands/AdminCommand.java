@@ -21,8 +21,7 @@ public class AdminCommand implements CommandExecutor {
             return false;
         }
 
-        Location location = new Location(Bukkit.getWorld(Main.getLobbyConfig().getLobbyName()), 0, 150, 0, 0,0);
-        player.teleport(location);
+
         return true;
     }
 }
