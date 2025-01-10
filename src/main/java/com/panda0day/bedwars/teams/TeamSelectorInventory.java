@@ -1,6 +1,7 @@
 package com.panda0day.bedwars.teams;
 
 import com.panda0day.bedwars.Main;
+import com.panda0day.bedwars.utils.ItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,23 +18,18 @@ public class TeamSelectorInventory {
         Inventory inventory = Bukkit.createInventory(null, 9, ChatColor.GOLD + "Team Selector");
 
         for (String team : TeamSelector.teamWoolColours.keySet()) {
-            Material woolMaterial = TeamSelector.getTeamWool(team);
             Team playerTeam = Main.getTeamManager().getTeamByName(team);
+            List<String> lore = new ArrayList<>();
+            playerTeam.getPlayers().forEach(teamPlayer -> {
+                lore.add("» " +ChatColor.GOLD + teamPlayer.getName());
+            });
 
-            ItemStack wool = new ItemStack(woolMaterial);
-            ItemMeta meta = wool.getItemMeta();
-
-            if (meta != null) {
-                List<String> lore = new ArrayList<>();
-                playerTeam.getPlayers().forEach(teamPlayer -> {
-                    lore.add("» " +ChatColor.GOLD + teamPlayer.getName());
-                });
-                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f" + playerTeam.getName()));
-                meta.setLore(lore);
-                wool.setItemMeta(meta);
-            }
-
-            inventory.addItem(wool);
+            inventory.addItem(
+                    new ItemManager(TeamSelector.getTeamWool(team))
+                            .setDisplayName(playerTeam.getColor() + "Team " + playerTeam.getName())
+                            .setLore(lore)
+                            .create()
+            );
 
         }
 
