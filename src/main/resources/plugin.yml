@@ -6,10 +6,10 @@ description: A BedWars spigot plugin for Minecraft 1.21.4
 author: Panda0day
 
 commands:
-  forcestart:
+  start:
     description: Force Starts a Game not depending on minimum players
-    usage: /forcestart
-  admintp:
+    usage: /start
+  admin:
     description: Admin TP to the Game BedWars Island
-    usage: /admintp
+    usage: /admin
 
