@@ -14,11 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class PlayerConnection implements Listener {
-    private final FileConfiguration gameConfig;
-
-    public PlayerConnection() {
-        gameConfig = Main.getInstance().getConfig();
-    }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -38,14 +33,14 @@ public class PlayerConnection implements Listener {
         event.setJoinMessage(Main.getMainConfig().getPrefix() + ChatColor.GREEN + "[+] " + player.getDisplayName() + " joined the bedwars!");
         player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 
-        World world = Main.getInstance().getServer().getWorld(Main.getLobbyConfig().getLobbyName());
+        World world = Bukkit.getWorld(Main.getLobbyConfig().getLobbyName());
         Location location = new Location(
                 world,
-                gameConfig.getDouble("lobby.spawnX"),
-                gameConfig.getDouble("lobby.spawnY"),
-                gameConfig.getDouble("lobby.spawnZ"),
-                (float) gameConfig.getDouble("lobby.spawnYaw"),
-                (float) gameConfig.getDouble("lobby.spawnPitch")
+                Main.getLobbyConfig().getFileConfiguration().getDouble("x"),
+                Main.getLobbyConfig().getFileConfiguration().getDouble("y"),
+                Main.getLobbyConfig().getFileConfiguration().getDouble("z"),
+                (float) Main.getLobbyConfig().getFileConfiguration().getDouble("yaw"),
+                (float) Main.getLobbyConfig().getFileConfiguration().getDouble("pitch")
         );
 
         player.teleport(location);
@@ -65,11 +60,12 @@ public class PlayerConnection implements Listener {
     }
 
     private void createDefaultInventoryItems(Player player) {
-        ItemStack compass = ItemManager.createItem(Material.COMPASS, ChatColor.GOLD + "Team Selector");
-
         PlayerInventory playerInventory = player.getInventory();
         playerInventory.clear();
 
-        playerInventory.setItem(4, compass);
+        playerInventory.setItem(4, new ItemManager(Material.COMPASS)
+                .setDisplayName(ChatColor.GOLD + "Team Selector")
+                .create()
+        );
     }
 }

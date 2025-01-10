@@ -24,10 +24,9 @@ public class GameStateManager {
     private int countdown;
 
     public GameStateManager() {
-        FileConfiguration gameConfig = Main.getInstance().getConfig();
-        minimumPlayers = gameConfig.getInt("game.minimum_players");
-        maximumPlayers = gameConfig.getInt("game.maximum_players");
-        countdown = gameConfig.getInt("game.countdown");
+        minimumPlayers = Main.getGameConfig().getMinimumPlayers();
+        maximumPlayers = Main.getGameConfig().getMaximumPlayers();
+        countdown = Main.getGameConfig().getCountdownTime();
     }
 
     public void checkForGameStart() {
