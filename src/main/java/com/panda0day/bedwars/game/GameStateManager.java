@@ -96,17 +96,7 @@ public class GameStateManager {
 
     private void spawnShopVillagers() {
         for (Team team : Main.getTeamManager().getTeams()) {
-            ConfigurationSection section = Main.getTeamConfig().getFileConfiguration().getConfigurationSection(team.getIdentifier() + ".shop");
-            Location shopLocation = new Location(
-                    Bukkit.getWorld(Main.getGameConfig().getWorldName()),
-                    section.getDouble("x"),
-                    section.getDouble("y"),
-                    section.getDouble("z"),
-                    (float) section.getDouble("yaw"),
-                    (float) section.getDouble("pitch")
-            );
-
-            new EntitySpawner(EntityType.VILLAGER, shopLocation, team.getName());
+            new EntitySpawner(EntityType.VILLAGER, team.getShopLocation(), team.getName());
         }
     }
 

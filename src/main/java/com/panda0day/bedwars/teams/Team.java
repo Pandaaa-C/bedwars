@@ -17,8 +17,9 @@ public class Team {
     private final ChatColor color;
     private final Location spawnLocation;
     private final Material material;
+    private final Location shopLocation;
 
-    public Team(String identifier, String name, String teamName, ChatColor color, Location spawnLocation, Material material) {
+    public Team(String identifier, String name, String teamName, ChatColor color, Location spawnLocation, Material material, Location shopLocation) {
         this.identifier = identifier;
         this.name = name;
         this.teamName = teamName;
@@ -26,6 +27,7 @@ public class Team {
         this.color = color;
         this.spawnLocation = spawnLocation;
         this.material = material;
+        this.shopLocation = shopLocation;
     }
 
     public String getName() {
@@ -54,6 +56,10 @@ public class Team {
 
     public Location getSpawnLocation() {
         return spawnLocation;
+    }
+
+    public Location getShopLocation() {
+        return shopLocation;
     }
 
     public void addPlayer(Player player) {

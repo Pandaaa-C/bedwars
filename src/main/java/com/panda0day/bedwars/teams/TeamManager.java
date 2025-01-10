@@ -29,7 +29,7 @@ public class TeamManager {
                 String name = resultSet.getString("name");
                 String teamName = resultSet.getString("team_name");
                 String color = resultSet.getString("color");
-                Location location = new Location(
+                Location spawnLocation = new Location(
                         Bukkit.getWorld("world"), // TODO: add different map names
                         resultSet.getDouble("spawnX"),
                         resultSet.getDouble("spawnY"),
@@ -38,7 +38,24 @@ public class TeamManager {
                         resultSet.getFloat("spawnPitch")
                 );
 
-                teams.add(new Team(name, name, teamName, ChatColor.getByChar(color), location, Material.getMaterial(resultSet.getString("material"))));
+                Location shopLocation = new Location(
+                        Bukkit.getWorld("world"),
+                        resultSet.getDouble("shopX"),
+                        resultSet.getDouble("shopY"),
+                        resultSet.getDouble("shopZ"),
+                        resultSet.getFloat("shopYaw"),
+                        resultSet.getFloat("shopPitch")
+                );
+
+                teams.add(new Team(
+                        name,
+                        name,
+                        teamName,
+                        ChatColor.getByChar(color),
+                        spawnLocation,
+                        Material.getMaterial(resultSet.getString("material")),
+                        shopLocation
+                ));
             }
         } catch (Exception exception) {
             Main.getInstance().getLogger().info(exception.getMessage());
