@@ -4,7 +4,7 @@ import com.panda0day.bedwars.configs.*;
 import com.panda0day.bedwars.game.GameState;
 import com.panda0day.bedwars.game.GameStateManager;
 import com.panda0day.bedwars.teams.TeamManager;
-import com.panda0day.bedwars.utils.Config;
+import com.panda0day.bedwars.configs.MainConfig;
 import com.panda0day.bedwars.utils.Database;
 import com.panda0day.bedwars.utils.WorldManager;
 import org.bukkit.Bukkit;
@@ -23,11 +23,9 @@ public class Main extends JavaPlugin {
     private static Database _database;
 
     // Configs
-    private static Config _mainConfig;
+    private static MainConfig _mainConfig;
     private static DatabaseConfig _databaseConfig;
     private static GameConfig _gameConfig;
-    private static TeamConfig _teamConfig;
-    private static LobbyConfig _lobbyConfig;
 
     // Managers
     private static final WorldManager worldManager = new WorldManager();
@@ -39,11 +37,9 @@ public class Main extends JavaPlugin {
         instance = this;
         getLogger().info("Starting Plugin");
 
-        _mainConfig = new Config(this);
+        _mainConfig = new MainConfig(this);
         _databaseConfig = new DatabaseConfig("mysql.yml");
         _gameConfig = new GameConfig("game.yml");
-        _teamConfig = new TeamConfig("teams.yml");
-        _lobbyConfig = new LobbyConfig("lobby.yml");
 
         _database = new Database(
                 getDatabaseConfig().getHost(),
@@ -64,7 +60,7 @@ public class Main extends JavaPlugin {
             System.err.println(exception.getMessage());
         }
 
-        worldManager.loadWorld(Main.getLobbyConfig().getFileConfiguration().getString("world"));
+        worldManager.loadWorld(Main.getMainConfig().getLobbyWorld());
         worldManager.checkAndRestoreBackup(Main.getGameConfig().getFileConfiguration().getString("map_world"), Main.getGameConfig().getFileConfiguration().getString("map_world") + "_backup");
         worldManager.loadWorld(Main.getGameConfig().getFileConfiguration().getString("map_world"));
     }
@@ -74,7 +70,7 @@ public class Main extends JavaPlugin {
         kickAllPlayers("Server is reloading...");
         getLogger().info("Stopping Plugin");
 
-        worldManager.unloadWorld(Main.getLobbyConfig().getFileConfiguration().getString("world"));
+        worldManager.unloadWorld("spawn");
     }
 
     private void kickAllPlayers(String reason) {
@@ -127,20 +123,12 @@ public class Main extends JavaPlugin {
         return teamManager;
     }
 
-    public static Config getMainConfig() {
+    public static MainConfig getMainConfig() {
         return _mainConfig;
     }
 
     public static GameConfig getGameConfig() {
         return _gameConfig;
-    }
-
-    public static TeamConfig getTeamConfig() {
-        return _teamConfig;
-    }
-
-    public static LobbyConfig getLobbyConfig() {
-        return _lobbyConfig;
     }
 
     public static DatabaseConfig getDatabaseConfig() {
