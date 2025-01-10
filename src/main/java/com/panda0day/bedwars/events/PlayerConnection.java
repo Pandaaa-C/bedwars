@@ -13,6 +13,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.util.List;
+
 public class PlayerConnection implements Listener {
 
     @EventHandler
@@ -65,6 +67,9 @@ public class PlayerConnection implements Listener {
 
         playerInventory.setItem(4, new ItemManager(Material.COMPASS)
                 .setDisplayName(ChatColor.GOLD + "Team Selector")
+                .setLore(List.of(
+                        ChatColor.GREEN + "Choose your Team"
+                ))
                 .create()
         );
     }
