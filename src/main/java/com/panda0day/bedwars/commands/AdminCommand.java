@@ -21,7 +21,6 @@ public class AdminCommand implements CommandExecutor {
             return false;
         }
 
-
         return true;
     }
 }
