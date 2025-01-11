@@ -1,6 +1,7 @@
 package com.panda0day.bedwars.utils;
 
 import com.panda0day.bedwars.Main;
+import com.panda0day.bedwars.game.GameState;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -17,10 +18,18 @@ public class PlayerBoardManager implements Runnable {
     @Override
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getScoreboard() != null && player.getScoreboard().getObjective("BEDWARS") != null) {
-                updateScoreboard(player);
+            if (Main.getGameStateManager().getCurrentGameState() == GameState.LOBBY) {
+                if (player.getScoreboard() != null && player.getScoreboard().getObjective("BEDWARS") != null) {
+                    updateScoreboard(player);
+                } else {
+                    createNewScoreboard(player);
+                }
             } else {
-                createNewScoreboard(player);
+                if (player.getScoreboard() != null && player.getScoreboard().getObjective("BEDWARS_IG") != null) {
+                    updateInGameScoreboard(player);
+                } else {
+                    createNewInGameScoreboard(player);
+                }
             }
         }
     }
@@ -81,6 +90,46 @@ public class PlayerBoardManager implements Runnable {
 
         Team playersTeam = scoreboard.getTeam("Players");
         playersTeam.setSuffix(ChatColor.WHITE + "" + Main.getGameStateManager().getPlayers().size() + "/" + Main.getGameStateManager().getMaximumPlayers());
+    }
+
+    private void createNewInGameScoreboard(Player player){
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        Objective objective = scoreboard.registerNewObjective("BEDWARS_IG", "dummy");
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        objective.setDisplayName(ChatColor.YELLOW +"" + ChatColor.BOLD + " « BedWars » ");
+
+        objective.getScore(ChatColor.RESET + " ").setScore(Main.getTeamManager().getAllTeams().size() + 1);
+        objective.getScore(ChatColor.RED + " ").setScore(0);
+
+        for (int i = 0; i < Main.getTeamManager().getAllTeams().size(); i++) {
+            com.panda0day.bedwars.teams.Team team = Main.getTeamManager().getAllTeams().get(i);
+            if (team == null) continue;
+
+            String teamKey = team.getColor().toString();
+            Team teamEntry = scoreboard.registerNewTeam(teamKey);
+            teamEntry.addEntry(teamKey);
+            teamEntry.setPrefix("» " + team.getColor() + team.getName());
+            String eliminationStatus = team.isEliminated() ? "❌" : "✔";
+            teamEntry.setSuffix(" " + eliminationStatus);
+
+            objective.getScore(teamKey).setScore(i + 1);
+        }
+
+        player.setScoreboard(scoreboard);
+    }
+
+    private void updateInGameScoreboard(Player player){
+        Scoreboard scoreboard = player.getScoreboard();
+
+        for (int i = 0; i < Main.getTeamManager().getAllTeams().size(); i++) {
+            com.panda0day.bedwars.teams.Team team = Main.getTeamManager().getAllTeams().get(i);
+            String teamKey = team.getColor().toString();
+            Team teamEntry = scoreboard.getTeam(teamKey);
+            if (teamEntry != null) {
+                String eliminationStatus = team.isEliminated() ? "❌" : "✔";
+                teamEntry.setSuffix(" " + eliminationStatus);
+            }
+        }
     }
 
     public static PlayerBoardManager getInstance() {
