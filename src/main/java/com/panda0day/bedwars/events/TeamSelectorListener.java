@@ -2,7 +2,6 @@ package com.panda0day.bedwars.events;
 
 import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.teams.Team;
-import com.panda0day.bedwars.utils.PlayerScoreboard;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -60,7 +59,6 @@ public class TeamSelectorListener implements Listener {
         }
         newTeam.addPlayer(player);
         Main.getTeamManager().updateTeam(newTeam);
-        PlayerScoreboard.updateScoreboards();
 
         player.closeInventory();
     }

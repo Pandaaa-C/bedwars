@@ -2,7 +2,6 @@ package com.panda0day.bedwars.events;
 
 import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.teams.Team;
-import com.panda0day.bedwars.utils.PlayerScoreboard;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,9 +20,6 @@ public class PlayerQuit implements Listener {
             team.removePlayer(player);
 
         // TODO: Check if GAME state and then elimate player from team etc.
-
-        PlayerScoreboard.removeBoard(player);
-        PlayerScoreboard.updateScoreboards();
         Main.getGameStateManager().removePlayer(player);
     }
 }

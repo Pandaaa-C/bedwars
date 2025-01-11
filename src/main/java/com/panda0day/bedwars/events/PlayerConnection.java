@@ -4,14 +4,11 @@ import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.game.GameState;
 import com.panda0day.bedwars.utils.ItemManager;
 import com.panda0day.bedwars.utils.LocationManager;
-import com.panda0day.bedwars.utils.PlayerScoreboard;
 import org.bukkit.*;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.List;
@@ -52,8 +49,6 @@ public class PlayerConnection implements Listener {
 
         Main.getGameStateManager().addPlayer(player);
         Main.getTeamManager().assignPlayerToTeam(player);
-        PlayerScoreboard.createScoreboard(player);
-        PlayerScoreboard.updateScoreboards();
         Main.getGameStateManager().checkForGameStart();
     }
 
