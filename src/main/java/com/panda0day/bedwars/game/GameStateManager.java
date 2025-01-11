@@ -11,10 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 public class GameStateManager {
     private final Maps currentMap;
@@ -32,7 +29,7 @@ public class GameStateManager {
     }
 
     public void checkForGameStart() {
-        if (players.size() >= minimumPlayers) {
+        if (players.size() >= getMinimumPlayers()) {
             startCountdown();
         }
     }
