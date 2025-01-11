@@ -53,14 +53,17 @@ public class GameStateManager {
 
         if (aliveTeams.size() == 1) {
             Team winningTeam = aliveTeams.get(0);
-            Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended! Team " + winningTeam.getName() + " wins!");
+            Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended! " + winningTeam.getColor() + winningTeam.getTeamName() + " wins!");
             endGame();
             return;
         }
 
         if (alivePlayers.size() == 1) {
             Player lastPlayer = alivePlayers.get(0);
-            Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended! " + lastPlayer.getName() + " is the last player standing!");
+            Team winningTeam = Main.getTeamManager().getTeamFromPlayer(lastPlayer);
+            if (winningTeam == null) return;
+
+            Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended! " + winningTeam.getColor() + winningTeam.getTeamName() + " wins!");
             endGame();
             return;
         }
@@ -68,7 +71,6 @@ public class GameStateManager {
         if (aliveTeams.isEmpty() || alivePlayers.isEmpty()) {
             Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended in a draw!");
             endGame();
-            return;
         }
     }
 
