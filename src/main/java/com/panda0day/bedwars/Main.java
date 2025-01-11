@@ -63,6 +63,8 @@ public class Main extends JavaPlugin {
         worldManager.checkAndRestoreBackup(gameStateManager.getCurrentMap().getMapWorld(), gameStateManager.getCurrentMap().getMapWorld() + "_backup");
         worldManager.loadWorld(gameStateManager.getCurrentMap().getMapWorld());
 
+        teamManager.loadTeams();
+
         try {
             registerEventListenerClasses();
             registerCommandClasses();

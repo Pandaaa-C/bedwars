@@ -2,6 +2,7 @@ package com.panda0day.bedwars.teams;
 
 import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.map.Maps;
+import com.panda0day.bedwars.utils.LocationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -16,12 +17,11 @@ public class TeamManager {
     private final List<Team> teams;
 
     public TeamManager() {
-        this.teams = this.getTeams();
+        this.teams = new ArrayList<>();
     }
 
-    public List<Team> getTeams() {
+    public void loadTeams() {
         ResultSet  resultSet = Main.getDatabase().executeQuery("SELECT * FROM teams;");
-        List<Team> teams = new ArrayList<>();
 
         try {
             while (resultSet.next()) {
@@ -49,21 +49,29 @@ public class TeamManager {
                         resultSet.getFloat("shopPitch")
                 );
 
-                teams.add(new Team(
+                Location bedLocation = new Location(
+                        Bukkit.getWorld(map.getMapWorld()),
+                        resultSet.getDouble("bedX"),
+                        resultSet.getDouble("bedY"),
+                        resultSet.getDouble("bedZ")
+                );
+
+                this.teams.add(new Team(
                         name,
                         name,
                         teamName,
                         ChatColor.getByChar(color.replace("§", "")),
                         spawnLocation,
                         Material.getMaterial(resultSet.getString("material")),
-                        shopLocation
+                        shopLocation,
+                        bedLocation
                 ));
+
+                Main.getInstance().getLogger().info("[TeamManager] Team " + name + " has been loaded");
             }
         } catch (Exception exception) {
             Main.getInstance().getLogger().info(exception.getMessage());
         }
-
-        return teams;
     }
 
     public Team getTeamByName(String name) {
@@ -92,6 +100,15 @@ public class TeamManager {
             }
         }
 
+        return null;
+    }
+
+    public Team getTeamByBedLocation(Location location) {
+        for (Team team : teams) {
+            if (LocationManager.areLocationsEqual(location, team.getBedLocation())) {
+                return team;
+            }
+        }
         return null;
     }
 
@@ -140,7 +157,10 @@ public class TeamManager {
                      shopY DOUBLE NOT NULL,
                      shopZ DOUBLE NOT NULL,
                      shopYaw FLOAT NOT NULL,
-                     shopPitch FLOAT NOT NULL
+                     shopPitch FLOAT NOT NULL,
+                     bedX DOUBLE NOT NULL,
+                     bedY DOUBLE NOT NULL,
+                     bedZ DOUBLE NOT NULL
                  )
                 """);
     }

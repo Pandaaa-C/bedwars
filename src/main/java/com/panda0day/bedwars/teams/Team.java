@@ -18,8 +18,10 @@ public class Team {
     private final Location spawnLocation;
     private final Material material;
     private final Location shopLocation;
+    private final Location bedLocation;
+    private boolean eliminated;
 
-    public Team(String identifier, String name, String teamName, ChatColor color, Location spawnLocation, Material material, Location shopLocation) {
+    public Team(String identifier, String name, String teamName, ChatColor color, Location spawnLocation, Material material, Location shopLocation, Location bedLocation) {
         this.identifier = identifier;
         this.name = name;
         this.teamName = teamName;
@@ -28,6 +30,8 @@ public class Team {
         this.spawnLocation = spawnLocation;
         this.material = material;
         this.shopLocation = shopLocation;
+        this.bedLocation = bedLocation;
+        this.eliminated = false;
     }
 
     public String getName() {
@@ -60,6 +64,18 @@ public class Team {
 
     public Location getShopLocation() {
         return shopLocation;
+    }
+
+    public Location getBedLocation() {
+        return bedLocation;
+    }
+
+    public boolean isEliminated() {
+        return eliminated;
+    }
+
+    public void setEliminated(boolean eliminated) {
+        this.eliminated = eliminated;
     }
 
     public void addPlayer(Player player) {
