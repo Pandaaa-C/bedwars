@@ -5,13 +5,12 @@ import com.panda0day.bedwars.game.GameState;
 import com.panda0day.bedwars.teams.Team;
 import com.panda0day.bedwars.utils.LocationManager;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
-
-import java.util.Objects;
 
 public class PlayerRespawn implements Listener {
 
@@ -26,6 +25,11 @@ public class PlayerRespawn implements Listener {
             assert location != null;
             event.setRespawnLocation(location);
             return;
+        }
+
+        if (team.isEliminated()) {
+            player.setGameMode(GameMode.SPECTATOR);
+            player.sendMessage(Main.getMainConfig().getPrefix() + "§cYour bed was destroyed!");
         }
 
         event.setRespawnLocation(team.getSpawnLocation());
