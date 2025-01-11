@@ -22,12 +22,14 @@ public class GameStateManager {
     private final int minimumPlayers;
     private final int maximumPlayers;
     private int countdown;
+    private boolean isCountdownRunning;
 
     public GameStateManager() {
         this.currentMap = Main.getMapManager().getRandomMap();
         minimumPlayers = this.currentMap.getMinimumPlayers();
         maximumPlayers = this.currentMap.getMaximumPlayers();
         countdown = this.currentMap.getCountdown();
+        this.isCountdownRunning = false;
     }
 
     public void checkForGameStart() {
@@ -53,7 +55,8 @@ public class GameStateManager {
 
         if (aliveTeams.size() == 1) {
             Team winningTeam = aliveTeams.get(0);
-            Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended! " + winningTeam.getColor() + winningTeam.getTeamName() + " wins!");
+            Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended! " + winningTeam.getColor() + winningTeam.getTeamName() + ChatColor.WHITE + " wins!");
+            setCurrentGameState(GameState.END);
             endGame();
             return;
         }
@@ -62,13 +65,15 @@ public class GameStateManager {
             Player lastPlayer = alivePlayers.get(0);
             Team winningTeam = Main.getTeamManager().getTeamFromPlayer(lastPlayer);
             if (winningTeam == null) return;
+            setCurrentGameState(GameState.END);
 
-            Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended! " + winningTeam.getColor() + winningTeam.getTeamName() + " wins!");
+            Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended! " + winningTeam.getColor() + winningTeam.getTeamName() + ChatColor.WHITE + " wins!");
             endGame();
             return;
         }
 
         if (aliveTeams.isEmpty() || alivePlayers.isEmpty()) {
+            setCurrentGameState(GameState.END);
             Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended in a draw!");
             endGame();
         }
@@ -87,6 +92,9 @@ public class GameStateManager {
     }
 
     public void startCountdown() {
+        if (this.isCountdownRunning) return;
+        this.isCountdownRunning = true;
+
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -170,6 +178,10 @@ public class GameStateManager {
 
     public void setCountdown(int countdown) {
         this.countdown = countdown;
+    }
+
+    public boolean isCountdownRunning() {
+        return isCountdownRunning;
     }
 
     public void setCurrentGameState(GameState gameState) {
