@@ -50,9 +50,8 @@ public class BlockDestroy implements Listener {
                         }
 
                         bedTeam.setEliminated(true);
-                        event.setCancelled(true);
+                        event.setCancelled(false);
                         event.setDropItems(false);
-                        block.breakNaturally();
 
                         Bukkit.getOnlinePlayers().forEach(_player -> {
                             _player.sendMessage(Main.getMainConfig().getPrefix() + bedTeam.getColor() + bedTeam.getTeamName() + " §ahas been eliminated!");
