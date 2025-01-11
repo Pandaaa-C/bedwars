@@ -28,6 +28,7 @@ public class MapManager {
                 int countdown = resultSet.getInt("countdown");
 
                 _maps.add(new Maps(mapName, mapWorld, maximumPlayers, minimumPlayers, playersPerTeam, countdown));
+                Main.getInstance().getLogger().info("[MapManager] Loaded map " + mapName);
             }
         } catch (Exception exception) {
             Main.getInstance().getLogger().info(exception.getMessage());
@@ -42,9 +43,7 @@ public class MapManager {
     }
 
     public Maps getRandomMap() {
-        Maps map = this.maps.stream().findFirst().orElse(null);
-        System.out.println(map);
-        return map;
+        return this.maps.stream().findFirst().orElse(null);
     }
 
     public static void createDefaultTables() {
