@@ -20,8 +20,10 @@ public class StartCommand implements CommandExecutor {
             return false;
         }
 
-        Main.getGameStateManager().setCountdown(3);
-        Main.getGameStateManager().startCountdown();
+        Main.getGameStateManager().setCountdown(5);
+
+        if (!Main.getGameStateManager().isCountdownRunning())
+            Main.getGameStateManager().startCountdown();
         return true;
     }
 }
