@@ -62,6 +62,24 @@ public class LocationManager {
         return resultSet == null;
     }
 
+    public static boolean areLocationsEqual(Location location1, Location location2) {
+        if (location1 == null || location2 == null) {
+            return false;
+        }
+
+        System.out.println(location1.getWorld());
+        System.out.println(location2.getWorld());
+
+        if (location1.getWorld() == null || location2.getWorld() == null) {
+            return false;
+        }
+
+        return location1.getWorld().getName().equals(location2.getWorld().getName()) &&
+                location1.getBlockX() == location2.getBlockX() &&
+                location1.getBlockY() == location2.getBlockY() &&
+                location1.getBlockZ() == location2.getBlockZ();
+    }
+
     public static void createDefaultTables() {
         Main.getDatabase().createTable("""
                 CREATE TABLE IF NOT EXISTS locations (
