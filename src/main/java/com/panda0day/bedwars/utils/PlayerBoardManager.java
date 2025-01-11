@@ -71,6 +71,7 @@ public class PlayerBoardManager implements Runnable {
     private void updateScoreboard(Player player){
         Scoreboard scoreboard = player.getScoreboard();
         com.panda0day.bedwars.teams.Team playerTeam = Main.getTeamManager().getTeamFromPlayer(player);
+        if (playerTeam == null) return;
 
         Team mapTeam = scoreboard.getTeam("Map");
         mapTeam.setSuffix(ChatColor.WHITE + Main.getGameStateManager().getCurrentMap().getMapName());
