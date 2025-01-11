@@ -67,9 +67,6 @@ public class LocationManager {
             return false;
         }
 
-        System.out.println(location1.getWorld());
-        System.out.println(location2.getWorld());
-
         if (location1.getWorld() == null || location2.getWorld() == null) {
             return false;
         }
