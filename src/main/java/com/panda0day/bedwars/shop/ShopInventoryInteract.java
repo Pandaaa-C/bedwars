@@ -43,7 +43,7 @@ public class ShopInventoryInteract {
         ItemMeta clickedItemMeta = clickedItem.getItemMeta();
         if (clickedItemMeta == null) return;
 
-        if (clickedItemMeta.getDisplayName().equals("§616 Blocks")) {
+        if (clickedItemMeta.getDisplayName().equals("§68 Blocks")) {
             PlayerInventory playerInventory = player.getInventory();
             if (InventoryManager.hasItemCount(playerInventory, Material.BRICK, 2)) {
                 if (InventoryManager.removeItemCount(player, Material.BRICK, 2)) {
@@ -52,8 +52,7 @@ public class ShopInventoryInteract {
 
                     playerInventory.addItem(
                             new ItemManager(playerTeam.getMaterial())
-                                    .setDisplayName(playerTeam.getColor() + "Team " + playerTeam.getName())
-                                    .setAmount(16)
+                                    .setAmount(8)
                                     .create()
                     );
                 }

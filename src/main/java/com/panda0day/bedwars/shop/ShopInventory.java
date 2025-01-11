@@ -32,9 +32,9 @@ public class ShopInventory {
         Inventory inventory = Bukkit.createInventory(null, 9 * 2, "Blocks");
         inventory.addItem(
                 new ItemManager(team.getMaterial())
-                        .setDisplayName(ChatColor.GOLD  + "16 Blocks")
+                        .setDisplayName(ChatColor.GOLD  + "8 Blocks")
                         .setLore(List.of(
-                                ChatColor.GREEN + "Buy 16 Blocks for",
+                                ChatColor.GREEN + "Buy 8 Blocks for",
                                 ChatColor.GOLD + "2 Bricks"
                         ))
                         .create()
