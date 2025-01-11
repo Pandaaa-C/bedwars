@@ -79,7 +79,6 @@ public class GameStateManager {
             player.getInventory().clear();
             player.setLevel(0);
             player.teleport(location);
-            player.setRespawnLocation(location);
             player.setGameMode(GameMode.SURVIVAL);
             player.setHealth(20);
             player.setFoodLevel(20);
@@ -95,7 +94,7 @@ public class GameStateManager {
     }
 
     private void spawnShopVillagers() {
-        for (Team team : Main.getTeamManager().getTeams()) {
+        for (Team team : Main.getTeamManager().getAllTeams()) {
             new EntitySpawner(EntityType.VILLAGER, team.getShopLocation(), team.getName());
         }
     }
