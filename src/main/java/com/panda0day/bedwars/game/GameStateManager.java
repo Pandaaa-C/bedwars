@@ -10,7 +10,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GameStateManager {
@@ -32,6 +34,54 @@ public class GameStateManager {
         if (players.size() >= getMinimumPlayers()) {
             startCountdown();
         }
+    }
+
+    public void checkForGameEnd() {
+        List<Team> aliveTeams = new ArrayList<>();
+        List<Player> alivePlayers = new ArrayList<>();
+
+        for (Player player : players) {
+            Team team = Main.getTeamManager().getTeamFromPlayer(player);
+            if (team != null && !team.isEliminated() && !aliveTeams.contains(team)) {
+                aliveTeams.add(team);
+            }
+
+            if (player.getGameMode() != GameMode.SPECTATOR) {
+                alivePlayers.add(player);
+            }
+        }
+
+        if (aliveTeams.size() == 1) {
+            Team winningTeam = aliveTeams.get(0);
+            Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended! Team " + winningTeam.getName() + " wins!");
+            endGame();
+            return;
+        }
+
+        if (alivePlayers.size() == 1) {
+            Player lastPlayer = alivePlayers.get(0);
+            Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended! " + lastPlayer.getName() + " is the last player standing!");
+            endGame();
+            return;
+        }
+
+        if (aliveTeams.isEmpty() || alivePlayers.isEmpty()) {
+            Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended in a draw!");
+            endGame();
+            return;
+        }
+    }
+
+    public void endGame() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Bukkit.getOnlinePlayers().forEach(player -> {
+                    player.kickPlayer("Game Over!");
+                    Bukkit.getServer().spigot().restart();
+                });
+            }
+        }.runTaskLater(Main.getInstance(), 60L);
     }
 
     public void startCountdown() {

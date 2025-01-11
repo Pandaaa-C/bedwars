@@ -114,7 +114,7 @@ public class TeamManager {
 
     public void assignPlayerToTeam(Player player) {
         for (Team team : teams) {
-            if (team.getPlayers().size() < Main.getGameStateManager().getMaximumPlayers()) {
+            if (team.getPlayers().size() < Main.getGameStateManager().getCurrentMap().getMaxPlayersPerTeam()) {
                 team.addPlayer(player);
                 player.sendMessage(ChatColor.GREEN + "You have been assigned to the " + team.getColor() + team.getName() + ChatColor.GREEN + " team.");
                 return;

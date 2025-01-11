@@ -32,6 +32,7 @@ public class PlayerRespawn implements Listener {
             player.sendMessage(Main.getMainConfig().getPrefix() + "§cYour bed was destroyed!");
         }
 
+        Main.getGameStateManager().checkForGameEnd();
         event.setRespawnLocation(team.getSpawnLocation());
     }
 }
