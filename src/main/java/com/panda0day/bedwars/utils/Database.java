@@ -101,7 +101,6 @@ public class Database {
     public void createTable(String sql) {
         try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
-            System.out.println("Table created or already exists.");
         } catch (SQLException e) {
             throw new RuntimeException("Error creating table: " + e.getMessage());
         }
