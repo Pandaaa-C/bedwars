@@ -5,16 +5,15 @@ import com.panda0day.bedwars.game.GameState;
 import com.panda0day.bedwars.game.GameStateManager;
 import com.panda0day.bedwars.teams.TeamManager;
 import com.panda0day.bedwars.configs.MainConfig;
-import com.panda0day.bedwars.utils.Database;
-import com.panda0day.bedwars.utils.LocationManager;
-import com.panda0day.bedwars.utils.MapManager;
-import com.panda0day.bedwars.utils.WorldManager;
+import com.panda0day.bedwars.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
@@ -34,6 +33,9 @@ public class Main extends JavaPlugin {
     private static MapManager mapManager;
     private static GameStateManager gameStateManager;
     private static TeamManager teamManager;
+
+    // Tasks
+    private BukkitTask boardTask;
 
     @Override
     public void onEnable() {
@@ -71,6 +73,8 @@ public class Main extends JavaPlugin {
         } catch (Exception exception) {
             System.err.println(exception.getMessage());
         }
+
+        boardTask = getServer().getScheduler().runTaskTimer(this, PlayerBoardManager.getInstance(), 0, 1);
     }
 
     @Override
@@ -82,6 +86,10 @@ public class Main extends JavaPlugin {
         Location location = LocationManager.getLocation("spawn");
         if (location == null || location.getWorld() == null) return;
         worldManager.unloadWorld(location.getWorld().getName());
+
+        Bukkit.getWorlds().forEach(world -> {
+            world.getEntities().forEach(Entity::remove);
+        });
     }
 
     private void kickAllPlayers(String reason) {
