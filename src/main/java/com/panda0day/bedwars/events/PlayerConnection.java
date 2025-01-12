@@ -4,7 +4,6 @@ import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.game.GameState;
 import com.panda0day.bedwars.location.Locations;
 import com.panda0day.bedwars.utils.ItemManager;
-import com.panda0day.bedwars.location.LocationManager;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,7 +31,7 @@ public class PlayerConnection implements Listener {
         }
 
         event.setJoinMessage(Main.getMainConfig().getPrefix() + ChatColor.GREEN + "[+] " + player.getDisplayName() + " joined the bedwars!");
-        player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
+        visiblePlayers(player);
 
         if (Main.getLocationManager().doesLocationExist("spawn")) {
             Locations location = Main.getLocationManager().getLocation("spawn");
@@ -64,5 +63,12 @@ public class PlayerConnection implements Listener {
                 ))
                 .create()
         );
+    }
+
+    private void visiblePlayers(Player player) {
+        Bukkit.getOnlinePlayers().forEach(_player -> {
+            _player.showPlayer(Main.getInstance(), player);
+            player.showPlayer(Main.getInstance(), _player);
+        });
     }
 }
