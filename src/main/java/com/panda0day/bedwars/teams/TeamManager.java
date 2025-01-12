@@ -2,7 +2,7 @@ package com.panda0day.bedwars.teams;
 
 import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.map.Maps;
-import com.panda0day.bedwars.utils.LocationManager;
+import com.panda0day.bedwars.location.LocationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -105,7 +105,7 @@ public class TeamManager {
 
     public Team getTeamByBedLocation(Location location) {
         for (Team team : teams) {
-            if (LocationManager.areLocationsEqual(location, team.getBedLocation())) {
+            if (Main.getLocationManager().areLocationsEqual(location, team.getBedLocation())) {
                 return team;
             }
         }

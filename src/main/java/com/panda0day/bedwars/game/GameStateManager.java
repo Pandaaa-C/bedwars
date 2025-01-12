@@ -2,6 +2,7 @@ package com.panda0day.bedwars.game;
 
 import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.map.Maps;
+import com.panda0day.bedwars.spawnables.ResourceSpawner;
 import com.panda0day.bedwars.spawnables.Spawnable;
 import com.panda0day.bedwars.teams.Team;
 import com.panda0day.bedwars.utils.EntitySpawner;
@@ -142,7 +143,7 @@ public class GameStateManager {
         });
 
 
-        GameResourceSpawner resourceSpawner = new GameResourceSpawner();
+        ResourceSpawner resourceSpawner = new ResourceSpawner();
         for (Spawnable spawnable : resourceSpawner.getLocations()) {
             resourceSpawner.startSpawning(spawnable);
         }

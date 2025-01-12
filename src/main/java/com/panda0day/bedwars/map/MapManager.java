@@ -1,7 +1,6 @@
-package com.panda0day.bedwars.utils;
+package com.panda0day.bedwars.map;
 
 import com.panda0day.bedwars.Main;
-import com.panda0day.bedwars.map.Maps;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
