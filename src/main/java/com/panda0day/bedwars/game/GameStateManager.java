@@ -149,6 +149,7 @@ public class GameStateManager {
         }
 
         spawnShopVillagers();
+        Main.getTeamManager().eliminateEmptyTeams();
     }
 
     private void spawnShopVillagers() {
