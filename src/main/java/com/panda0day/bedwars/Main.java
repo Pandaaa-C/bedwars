@@ -3,6 +3,9 @@ package com.panda0day.bedwars;
 import com.panda0day.bedwars.configs.*;
 import com.panda0day.bedwars.game.GameState;
 import com.panda0day.bedwars.game.GameStateManager;
+import com.panda0day.bedwars.location.LocationManager;
+import com.panda0day.bedwars.location.Locations;
+import com.panda0day.bedwars.map.MapManager;
 import com.panda0day.bedwars.teams.TeamManager;
 import com.panda0day.bedwars.configs.MainConfig;
 import com.panda0day.bedwars.utils.*;
@@ -33,6 +36,7 @@ public class Main extends JavaPlugin {
     private static MapManager mapManager;
     private static GameStateManager gameStateManager;
     private static TeamManager teamManager;
+    private static LocationManager locationManager;
 
     // Tasks
     private BukkitTask boardTask;
@@ -53,15 +57,18 @@ public class Main extends JavaPlugin {
                 getDatabaseConfig().getDatabase());
         _database.connect();
 
+        locationManager = new LocationManager();
+        locationManager.loadLocations();
+
         mapManager = new MapManager();
         teamManager = new TeamManager();
         gameStateManager = new GameStateManager();
         gameStateManager.setCurrentGameState(GameState.LOBBY);
 
-        Location location = LocationManager.getLocation("spawn");
-        if (location == null || location.getWorld() == null) return;
+        Locations location = getLocationManager().getLocation("spawn");
+        if (location == null || location.getLocation().getWorld() == null) return;
 
-        worldManager.loadWorld(location.getWorld().getName());
+        worldManager.loadWorld(location.getLocation().getWorld().getName());
         worldManager.checkAndRestoreBackup(gameStateManager.getCurrentMap().getMapWorld(), gameStateManager.getCurrentMap().getMapWorld() + "_backup");
         worldManager.loadWorld(gameStateManager.getCurrentMap().getMapWorld());
 
@@ -83,9 +90,9 @@ public class Main extends JavaPlugin {
         getLogger().info("Stopping Plugin");
 
 
-        Location location = LocationManager.getLocation("spawn");
-        if (location == null || location.getWorld() == null) return;
-        worldManager.unloadWorld(location.getWorld().getName());
+        Locations location = getLocationManager().getLocation("spawn");
+        if (location == null || location.getLocation().getWorld() == null) return;
+        worldManager.unloadWorld(location.getLocation().getWorld().getName());
 
         Bukkit.getWorlds().forEach(world -> {
             world.getEntities().forEach(Entity::remove);
@@ -155,5 +162,9 @@ public class Main extends JavaPlugin {
 
     public static MapManager getMapManager() {
         return mapManager;
+    }
+
+    public static LocationManager getLocationManager() {
+        return locationManager;
     }
 }

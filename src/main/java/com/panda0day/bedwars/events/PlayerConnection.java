@@ -2,8 +2,9 @@ package com.panda0day.bedwars.events;
 
 import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.game.GameState;
+import com.panda0day.bedwars.location.Locations;
 import com.panda0day.bedwars.utils.ItemManager;
-import com.panda0day.bedwars.utils.LocationManager;
+import com.panda0day.bedwars.location.LocationManager;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,10 +34,10 @@ public class PlayerConnection implements Listener {
         event.setJoinMessage(Main.getMainConfig().getPrefix() + ChatColor.GREEN + "[+] " + player.getDisplayName() + " joined the bedwars!");
         player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 
-        if (LocationManager.doesLocationExist("spawn")) {
-            Location location = LocationManager.getLocation("spawn");
+        if (Main.getLocationManager().doesLocationExist("spawn")) {
+            Locations location = Main.getLocationManager().getLocation("spawn");
             if (location != null) {
-                player.teleport(location);
+                player.teleport(location.getLocation());
             }
         }
 

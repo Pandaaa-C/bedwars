@@ -1,7 +1,7 @@
 package com.panda0day.bedwars.commands;
 
 import com.panda0day.bedwars.Main;
-import com.panda0day.bedwars.utils.LocationManager;
+import com.panda0day.bedwars.location.LocationManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -26,7 +26,7 @@ public class SetSpawnCommand implements CommandExecutor {
             return false;
         }
 
-        LocationManager.setLocation("spawn", player.getLocation());
+        Main.getLocationManager().setLocation("spawn", player.getLocation());
         player.sendMessage(Main.getMainConfig().getPrefix() + "§aYou have set the spawn location ");
 
          return true;
