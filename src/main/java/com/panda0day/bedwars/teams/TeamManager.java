@@ -139,6 +139,14 @@ public class TeamManager {
         return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
     }
 
+    public void eliminateEmptyTeams() {
+        this.teams.forEach(team -> {
+            if (team.getPlayers().size() < Main.getGameStateManager().getCurrentMap().getMaxPlayersPerTeam()) {
+                team.setEliminated(true);
+            }
+        });
+    }
+
     public static void createDefaultTables() {
         Main.getDatabase().createTable("""
                 CREATE TABLE IF NOT EXISTS teams (
