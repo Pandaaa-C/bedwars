@@ -89,7 +89,7 @@ public class GameStateManager {
                     Bukkit.getServer().spigot().restart();
                 });
             }
-        }.runTaskLater(Main.getInstance(), 60L);
+        }.runTaskLater(Main.getInstance(), 20L * 5);
     }
 
     public void startCountdown() {
