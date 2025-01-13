@@ -6,6 +6,7 @@ import com.panda0day.bedwars.game.GameStateManager;
 import com.panda0day.bedwars.location.LocationManager;
 import com.panda0day.bedwars.location.Locations;
 import com.panda0day.bedwars.map.MapManager;
+import com.panda0day.bedwars.shop.ShopManager;
 import com.panda0day.bedwars.teams.TeamManager;
 import com.panda0day.bedwars.configs.MainConfig;
 import com.panda0day.bedwars.utils.*;
@@ -37,6 +38,7 @@ public class Main extends JavaPlugin {
     private static GameStateManager gameStateManager;
     private static TeamManager teamManager;
     private static LocationManager locationManager;
+    private static ShopManager shopManager;
 
     // Tasks
     private BukkitTask boardTask;
@@ -59,6 +61,10 @@ public class Main extends JavaPlugin {
 
         locationManager = new LocationManager();
         locationManager.loadLocations();
+
+        shopManager = new ShopManager();
+        shopManager.loadShopCategories();
+        shopManager.loadShopItems();
 
         mapManager = new MapManager();
         teamManager = new TeamManager();
@@ -166,5 +172,13 @@ public class Main extends JavaPlugin {
 
     public static LocationManager getLocationManager() {
         return locationManager;
+    }
+
+    public static ShopManager getShopManager() {
+        return shopManager;
+    }
+
+    public BukkitTask getBoardTask() {
+        return boardTask;
     }
 }

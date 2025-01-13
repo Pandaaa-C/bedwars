@@ -18,25 +18,12 @@ public class ShopInventory {
         if (team == null) return;
 
         Inventory inventory = Bukkit.createInventory(null, 9 * 2, "Shop");
-        inventory.addItem(
-                new ItemManager(team.getMaterial())
-                        .setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Blocks")
-                        .create()
-        );
-        inventory.addItem(
-                new ItemManager(Material.IRON_SWORD)
-                        .addEnchantment(Enchantment.UNBREAKING, 5)
-                        .setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD + "Tools")
-                        .create()
-        );
-        inventory.addItem(
-                new ItemManager(Material.TNT)
-                        .setDisplayName(ChatColor.BLUE + "" + ChatColor.BOLD + "Misc")
-                        .setLore(List.of(
-                                ChatColor.RED + "Coming soon"
-                        ))
-                        .create()
-        );
+
+        Main.getShopManager().getShopItemCategories().forEach(shopItemCategory -> {
+            inventory.addItem(
+                    shopItemCategory.getCategoryItem()
+            );
+        });
 
         player.openInventory(inventory);
     }
