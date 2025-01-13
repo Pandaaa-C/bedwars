@@ -1,43 +1,101 @@
 package com.panda0day.bedwars.game;
 
 import com.panda0day.bedwars.Main;
+import com.panda0day.bedwars.map.Maps;
+import com.panda0day.bedwars.spawnables.ResourceSpawner;
+import com.panda0day.bedwars.spawnables.Spawnable;
 import com.panda0day.bedwars.teams.Team;
 import com.panda0day.bedwars.utils.EntitySpawner;
 import org.bukkit.*;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 public class GameStateManager {
-    private String gameName;
+    private final Maps currentMap;
     private GameState currentGameState = GameState.LOBBY;
     private final Set<Player> players = new HashSet<>();
     private final int minimumPlayers;
     private final int maximumPlayers;
     private int countdown;
+    private boolean isCountdownRunning;
 
     public GameStateManager() {
-        this.gameName = "game";
-        minimumPlayers = Main.getGameConfig().getMinimumPlayers();
-        maximumPlayers = Main.getGameConfig().getMaximumPlayers();
-        countdown = Main.getGameConfig().getCountdownTime();
+        this.currentMap = Main.getMapManager().getRandomMap();
+        minimumPlayers = this.currentMap.getMinimumPlayers();
+        maximumPlayers = this.currentMap.getMaximumPlayers();
+        countdown = this.currentMap.getCountdown();
+        this.isCountdownRunning = false;
     }
 
     public void checkForGameStart() {
-        if (players.size() >= minimumPlayers) {
+        if (players.size() >= getMinimumPlayers()) {
             startCountdown();
         }
     }
 
+    public void checkForGameEnd() {
+        List<Team> aliveTeams = new ArrayList<>();
+        List<Player> alivePlayers = new ArrayList<>();
+
+        for (Player player : players) {
+            Team team = Main.getTeamManager().getTeamFromPlayer(player);
+            if (team != null && !team.isEliminated() && !aliveTeams.contains(team)) {
+                aliveTeams.add(team);
+            }
+
+            if (player.getGameMode() != GameMode.SPECTATOR) {
+                alivePlayers.add(player);
+            }
+        }
+
+        if (aliveTeams.size() == 1) {
+            Team winningTeam = aliveTeams.get(0);
+            Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended! " + winningTeam.getColor() + winningTeam.getTeamName() + ChatColor.WHITE + " wins!");
+            setCurrentGameState(GameState.END);
+            endGame();
+            return;
+        }
+
+        if (alivePlayers.size() == 1) {
+            Player lastPlayer = alivePlayers.get(0);
+            Team winningTeam = Main.getTeamManager().getTeamFromPlayer(lastPlayer);
+            if (winningTeam == null) return;
+            setCurrentGameState(GameState.END);
+
+            Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended! " + winningTeam.getColor() + winningTeam.getTeamName() + ChatColor.WHITE + " wins!");
+            endGame();
+            return;
+        }
+
+        if (aliveTeams.isEmpty() || alivePlayers.isEmpty()) {
+            setCurrentGameState(GameState.END);
+            Bukkit.broadcastMessage(Main.getMainConfig().getPrefix() + "The game has ended in a draw!");
+            endGame();
+        }
+    }
+
+    public void endGame() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Bukkit.getOnlinePlayers().forEach(player -> {
+                    player.kickPlayer("Game Over!");
+                    Bukkit.getServer().spigot().restart();
+                });
+            }
+        }.runTaskLater(Main.getInstance(), 20L * 5);
+    }
+
     public void startCountdown() {
+        if (this.isCountdownRunning) return;
+        this.isCountdownRunning = true;
+
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -57,7 +115,7 @@ public class GameStateManager {
 
     private void startGame() {
         setCurrentGameState(GameState.GAME);
-        Main.getWorldManager().loadWorld(Main.getGameConfig().getFileConfiguration().getString("map_world"));
+        Main.getWorldManager().loadWorld(this.currentMap.getMapWorld());
 
         Bukkit.getOnlinePlayers().forEach(player -> {
             Team team = Main.getTeamManager().getTeamFromPlayer(player);
@@ -66,7 +124,7 @@ public class GameStateManager {
                 return;
             }
 
-            World world = Bukkit.getWorld(Main.getGameConfig().getFileConfiguration().getString("map_world"));
+            World world = Bukkit.getWorld(this.currentMap.getMapWorld());
             Location location = new Location(
                     world,
                     team.getSpawnLocation().getX(),
@@ -79,23 +137,23 @@ public class GameStateManager {
             player.getInventory().clear();
             player.setLevel(0);
             player.teleport(location);
-            player.setRespawnLocation(location);
             player.setGameMode(GameMode.SURVIVAL);
             player.setHealth(20);
             player.setFoodLevel(20);
         });
 
 
-        GameResourceSpawner resourceSpawner = new GameResourceSpawner(Main.getInstance());
-        resourceSpawner.startSpawning(Material.BRICK, 20L * 2);
-        resourceSpawner.startSpawning(Material.IRON_INGOT, 20L * 6);
-        resourceSpawner.startSpawning(Material.GOLD_INGOT, 20L * 20);
+        ResourceSpawner resourceSpawner = new ResourceSpawner();
+        for (Spawnable spawnable : resourceSpawner.getLocations()) {
+            resourceSpawner.startSpawning(spawnable);
+        }
 
         spawnShopVillagers();
+        Main.getTeamManager().eliminateEmptyTeams();
     }
 
     private void spawnShopVillagers() {
-        for (Team team : Main.getTeamManager().getTeams()) {
+        for (Team team : Main.getTeamManager().getAllTeams()) {
             new EntitySpawner(EntityType.VILLAGER, team.getShopLocation(), team.getName());
         }
     }
@@ -124,6 +182,10 @@ public class GameStateManager {
         this.countdown = countdown;
     }
 
+    public boolean isCountdownRunning() {
+        return isCountdownRunning;
+    }
+
     public void setCurrentGameState(GameState gameState) {
         currentGameState = gameState;
         Main.getInstance().getLogger().info("Set game state to: " + gameState);
@@ -131,5 +193,9 @@ public class GameStateManager {
 
     public GameState getCurrentGameState() {
         return currentGameState;
+    }
+
+    public Maps getCurrentMap() {
+        return currentMap;
     }
 }

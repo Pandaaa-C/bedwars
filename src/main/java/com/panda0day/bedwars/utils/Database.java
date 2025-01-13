@@ -1,6 +1,10 @@
 package com.panda0day.bedwars.utils;
 
 import com.panda0day.bedwars.Main;
+import com.panda0day.bedwars.spawnables.ResourceSpawner;
+import com.panda0day.bedwars.location.LocationManager;
+import com.panda0day.bedwars.map.MapManager;
+import com.panda0day.bedwars.teams.TeamManager;
 
 import java.sql.*;
 
@@ -99,7 +103,6 @@ public class Database {
     public void createTable(String sql) {
         try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
-            System.out.println("Table created or already exists.");
         } catch (SQLException e) {
             throw new RuntimeException("Error creating table: " + e.getMessage());
         }
@@ -107,5 +110,8 @@ public class Database {
 
     private void createDefaultTables() {
         LocationManager.createDefaultTables();
+        MapManager.createDefaultTables();
+        TeamManager.createDefaultTables();
+        ResourceSpawner.createDefaultTables();
     }
 }

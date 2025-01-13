@@ -18,8 +18,10 @@ public class Team {
     private final Location spawnLocation;
     private final Material material;
     private final Location shopLocation;
+    private final Location bedLocation;
+    private boolean eliminated;
 
-    public Team(String identifier, String name, String teamName, ChatColor color, Location spawnLocation, Material material, Location shopLocation) {
+    public Team(String identifier, String name, String teamName, ChatColor color, Location spawnLocation, Material material, Location shopLocation, Location bedLocation) {
         this.identifier = identifier;
         this.name = name;
         this.teamName = teamName;
@@ -28,6 +30,8 @@ public class Team {
         this.spawnLocation = spawnLocation;
         this.material = material;
         this.shopLocation = shopLocation;
+        this.bedLocation = bedLocation;
+        this.eliminated = false;
     }
 
     public String getName() {
@@ -47,7 +51,7 @@ public class Team {
     }
 
     public List<Player> getPlayers() {
-        return players;
+        return this.players;
     }
 
     public ChatColor getColor() {
@@ -62,10 +66,22 @@ public class Team {
         return shopLocation;
     }
 
+    public Location getBedLocation() {
+        return bedLocation;
+    }
+
+    public boolean isEliminated() {
+        return eliminated;
+    }
+
+    public void setEliminated(boolean eliminated) {
+        this.eliminated = eliminated;
+    }
+
     public void addPlayer(Player player) {
-        if (players.size() < Main.getGameConfig().getMaximumPerTeam()) {
+        if (players.size() < Main.getGameStateManager().getMaximumPlayers()) {
             players.add(player);
-            player.sendMessage(Main.getMainConfig().getPrefix() + "You have joined Team " + getColor() + getName());
+            player.sendMessage(Main.getMainConfig().getPrefix() + "You have joined " + getColor() + getTeamName());
         }
     }
 
@@ -74,10 +90,10 @@ public class Team {
     }
 
     public boolean isFull() {
-        return players.size() >= Main.getGameConfig().getMaximumPerTeam();
+        return players.size() >= Main.getGameStateManager().getCurrentMap().getMaxPlayersPerTeam();
     }
 
     public boolean hasSpace() {
-        return players.size() < Main.getGameConfig().getMaximumPerTeam();
+        return players.size() < Main.getGameStateManager().getCurrentMap().getMaxPlayersPerTeam();
     }
 }

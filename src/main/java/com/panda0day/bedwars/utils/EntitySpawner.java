@@ -35,8 +35,7 @@ public class EntitySpawner {
         if (_entity.getType() == EntityType.VILLAGER) {
             Villager villager = (Villager) _entity;
             villager.setAI(false);
-            Objects.requireNonNull(villager.getEquipment()).setItemInMainHand(new ItemStack(Material.EMERALD));
-            villager.getEquipment().setItemInMainHandDropChance(0.0f);
+            villager.setSilent(true);
         }
     }
 }

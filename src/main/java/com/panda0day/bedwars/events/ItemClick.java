@@ -1,6 +1,7 @@
 package com.panda0day.bedwars.events;
 
 import com.panda0day.bedwars.Main;
+import com.panda0day.bedwars.shop.ShopInventory;
 import com.panda0day.bedwars.shop.ShopInventoryInteract;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -14,13 +15,12 @@ public class ItemClick implements Listener {
     @EventHandler
     public void onItemClickChange(InventoryClickEvent event) {
         World world = event.getWhoClicked().getWorld();
-        if (!world.getName().equals(Main.getGameConfig().getWorldName())) {
+        if (!world.getName().equals(Main.getGameStateManager().getCurrentMap().getMapWorld())) {
             event.setCancelled(true);
-
-            Inventory inventory = event.getClickedInventory();
         }
 
         ShopInventoryInteract.onShopInventoryInteract(event);
         ShopInventoryInteract.onBlocksInventoryInteract(event);
+        ShopInventoryInteract.onToolsInventoryInteract(event);
     }
 }

@@ -13,7 +13,7 @@ public class BlockPlace implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         World world = event.getPlayer().getWorld();
-        if (!world.getName().equals(Main.getGameConfig().getWorldName()))
+        if (!world.getName().equals(Main.getGameStateManager().getCurrentMap().getMapWorld()))
             event.setCancelled(event.getPlayer().getGameMode() == GameMode.CREATIVE);
     }
 }

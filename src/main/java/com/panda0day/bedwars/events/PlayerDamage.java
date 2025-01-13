@@ -10,7 +10,7 @@ public class PlayerDamage implements Listener {
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
         World world = event.getEntity().getWorld();
-        if (!world.getName().equals(Main.getGameConfig().getWorldName()))
+        if (!world.getName().equals(Main.getGameStateManager().getCurrentMap().getMapWorld()))
             event.setCancelled(true);
     }
 }

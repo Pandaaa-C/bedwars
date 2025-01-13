@@ -3,17 +3,20 @@ package com.panda0day.bedwars;
 import com.panda0day.bedwars.configs.*;
 import com.panda0day.bedwars.game.GameState;
 import com.panda0day.bedwars.game.GameStateManager;
+import com.panda0day.bedwars.location.LocationManager;
+import com.panda0day.bedwars.location.Locations;
+import com.panda0day.bedwars.map.MapManager;
 import com.panda0day.bedwars.teams.TeamManager;
 import com.panda0day.bedwars.configs.MainConfig;
-import com.panda0day.bedwars.utils.Database;
-import com.panda0day.bedwars.utils.LocationManager;
-import com.panda0day.bedwars.utils.WorldManager;
+import com.panda0day.bedwars.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
@@ -27,12 +30,16 @@ public class Main extends JavaPlugin {
     // Configs
     private static MainConfig _mainConfig;
     private static DatabaseConfig _databaseConfig;
-    private static GameConfig _gameConfig;
 
     // Managers
     private static final WorldManager worldManager = new WorldManager();
+    private static MapManager mapManager;
     private static GameStateManager gameStateManager;
     private static TeamManager teamManager;
+    private static LocationManager locationManager;
+
+    // Tasks
+    private BukkitTask boardTask;
 
     @Override
     public void onEnable() {
@@ -41,7 +48,6 @@ public class Main extends JavaPlugin {
 
         _mainConfig = new MainConfig(this);
         _databaseConfig = new DatabaseConfig("mysql.yml");
-        _gameConfig = new GameConfig("game.yml");
 
         _database = new Database(
                 getDatabaseConfig().getHost(),
@@ -51,9 +57,22 @@ public class Main extends JavaPlugin {
                 getDatabaseConfig().getDatabase());
         _database.connect();
 
+        locationManager = new LocationManager();
+        locationManager.loadLocations();
+
+        mapManager = new MapManager();
         teamManager = new TeamManager();
         gameStateManager = new GameStateManager();
         gameStateManager.setCurrentGameState(GameState.LOBBY);
+
+        Locations location = getLocationManager().getLocation("spawn");
+        if (location == null || location.getLocation().getWorld() == null) return;
+
+        worldManager.loadWorld(location.getLocation().getWorld().getName());
+        worldManager.checkAndRestoreBackup(gameStateManager.getCurrentMap().getMapWorld(), gameStateManager.getCurrentMap().getMapWorld() + "_backup");
+        worldManager.loadWorld(gameStateManager.getCurrentMap().getMapWorld());
+
+        teamManager.loadTeams();
 
         try {
             registerEventListenerClasses();
@@ -62,12 +81,7 @@ public class Main extends JavaPlugin {
             System.err.println(exception.getMessage());
         }
 
-        Location location = LocationManager.getLocation("spawn");
-        if (location == null || location.getWorld() == null) return;
-        worldManager.loadWorld(location.getWorld().getName());
-        // TODO: add logic for games to be fetched from database, allow multiple games (different maps etc.) and add them to these methods
-        /*worldManager.checkAndRestoreBackup(Main.getGameConfig().getFileConfiguration().getString("map_world"), Main.getGameConfig().getFileConfiguration().getString("map_world") + "_backup");
-        worldManager.loadWorld(Main.getGameConfig().getFileConfiguration().getString("map_world"));*/
+        boardTask = getServer().getScheduler().runTaskTimer(this, PlayerBoardManager.getInstance(), 0, 1);
     }
 
     @Override
@@ -76,9 +90,13 @@ public class Main extends JavaPlugin {
         getLogger().info("Stopping Plugin");
 
 
-        Location location = LocationManager.getLocation("spawn");
-        if (location == null || location.getWorld() == null) return;
-        worldManager.unloadWorld(location.getWorld().getName());
+        Locations location = getLocationManager().getLocation("spawn");
+        if (location == null || location.getLocation().getWorld() == null) return;
+        worldManager.unloadWorld(location.getLocation().getWorld().getName());
+
+        Bukkit.getWorlds().forEach(world -> {
+            world.getEntities().forEach(Entity::remove);
+        });
     }
 
     private void kickAllPlayers(String reason) {
@@ -134,15 +152,19 @@ public class Main extends JavaPlugin {
         return _mainConfig;
     }
 
-    public static GameConfig getGameConfig() {
-        return _gameConfig;
-    }
-
     public static DatabaseConfig getDatabaseConfig() {
         return _databaseConfig;
     }
 
     public static Database getDatabase() {
         return _database;
+    }
+
+    public static MapManager getMapManager() {
+        return mapManager;
+    }
+
+    public static LocationManager getLocationManager() {
+        return locationManager;
     }
 }
