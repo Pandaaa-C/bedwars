@@ -1,6 +1,7 @@
 package com.panda0day.bedwars.utils;
 
 import com.panda0day.bedwars.Main;
+import com.panda0day.bedwars.shop.ShopManager;
 import com.panda0day.bedwars.spawnables.ResourceSpawner;
 import com.panda0day.bedwars.location.LocationManager;
 import com.panda0day.bedwars.map.MapManager;
@@ -109,6 +110,7 @@ public class Database {
     }
 
     private void createDefaultTables() {
+        ShopManager.createDefaultTables();
         LocationManager.createDefaultTables();
         MapManager.createDefaultTables();
         TeamManager.createDefaultTables();
