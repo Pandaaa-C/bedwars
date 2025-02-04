@@ -13,17 +13,17 @@ public class SetSpawnCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(commandSender instanceof Player player)) {
             System.out.println(commandSender.getName() + " is not a player");
-            return false;
+            return true;
         }
 
-        if (!player.isOp()) {
+        if (!player.hasPermission("bedwars.admin")) {
             player.sendMessage(Main.getMainConfig().getPrefix() + "§cYou dont have permission to use this command!");
-            return false;
+            return true;
         }
 
         if (args.length != 0) {
             player.sendMessage(Main.getMainConfig().getPrefix() + "§6Usage: /setspawn");
-            return false;
+            return true;
         }
 
         Main.getLocationManager().setLocation("spawn", player.getLocation());

@@ -31,7 +31,6 @@ public class PlayerConnection implements Listener {
         }
 
         event.setJoinMessage(Main.getMainConfig().getPrefix() + ChatColor.GREEN + "[+] " + player.getDisplayName() + " joined the bedwars!");
-        visiblePlayers(player);
 
         if (Main.getLocationManager().doesLocationExist("spawn")) {
             Locations location = Main.getLocationManager().getLocation("spawn");

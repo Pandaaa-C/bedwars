@@ -3,6 +3,7 @@ package com.panda0day.bedwars.events;
 import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.game.GameState;
 import com.panda0day.bedwars.teams.Team;
+import com.panda0day.bedwars.utils.BlockManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -21,8 +22,16 @@ public class BlockDestroy implements Listener {
         event.setCancelled(true);
 
         if (world.getName().equals(Main.getGameStateManager().getCurrentMap().getMapWorld()) && Main.getGameStateManager().getCurrentGameState() == GameState.GAME) {
-            event.setCancelled(false);
             Block block = event.getBlock();
+            event.setCancelled(false);
+            if (!BlockManager.isBreakableBlock(block) && block.getType() != Material.RED_BED) {
+                event.setCancelled(true);
+            }
+
+            if (BlockManager.isBreakableBlock(block)) {
+                BlockManager.removeBreakableBlock(block);
+            }
+
             if (block.getType() == Material.RED_BED) {
                 BlockData blockData = block.getBlockData();
                 if (blockData instanceof Bed bed) {

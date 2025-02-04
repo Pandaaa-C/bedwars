@@ -12,12 +12,12 @@ public class StartCommand implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (!(commandSender instanceof Player player)) {
             commandSender.sendMessage("This command can only be executed by a player.");
-            return false;
+            return true;
         }
 
-        if (!player.isOp()) {
-            player.sendMessage("You do not have permission to start the game.");
-            return false;
+        if (!player.hasPermission("bedwars.start")) {
+            player.sendMessage(Main.getMainConfig().getPrefix() + "You do not have permission to start the game.");
+            return true;
         }
 
         Main.getGameStateManager().setCountdown(5);
