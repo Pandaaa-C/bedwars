@@ -173,7 +173,9 @@ public class TeamManager {
                      shopPitch FLOAT NOT NULL,
                      bedX DOUBLE NOT NULL,
                      bedY DOUBLE NOT NULL,
-                     bedZ DOUBLE NOT NULL
+                     bedZ DOUBLE NOT NULL,
+                     bedYaw FLOAT NOT NULL,
+                     bedPitch FLOAT NOT NULL
                  )
                 """);
     }
