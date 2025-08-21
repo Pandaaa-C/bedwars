@@ -11,7 +11,6 @@ import com.panda0day.bedwars.teams.TeamManager;
 import com.panda0day.bedwars.configs.MainConfig;
 import com.panda0day.bedwars.utils.*;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
