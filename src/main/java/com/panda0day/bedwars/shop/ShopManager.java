@@ -85,5 +85,14 @@ public class ShopManager {
                      price INT(32) NOT NULL
                  )
                 """);
+
+        Main.getDatabase().createTable("""
+                CREATE TABLE IF NOT EXISTS shop_category (
+                     id INT AUTO_INCREMENT PRIMARY KEY,
+                     name VARCHAR(255) NOT NULL UNIQUE,
+                     item_id VARCHAR(255) NOT NULL,
+                     description VARCHAR(255) NOT NULL
+                 )
+                """);
     }
 }
