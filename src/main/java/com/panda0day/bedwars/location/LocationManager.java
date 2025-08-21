@@ -57,7 +57,9 @@ public class LocationManager {
     }
 
     public boolean setLocation(String name, Location location) {
-        ResultSet resultSet = Main.getDatabase().executeQuery("INSERT INTO locations (name, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?);",
+        Main.getDatabase().executeQuery(
+                "INSERT INTO locations (name, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?) " +
+                        "ON DUPLICATE KEY UPDATE world = VALUES(world), x = VALUES(x), y = VALUES(y), z = VALUES(z), yaw = VALUES(yaw), pitch = VALUES(pitch);",
                 name,
                 Objects.requireNonNull(location.getWorld()).getName(),
                 location.getX(),
@@ -67,9 +69,18 @@ public class LocationManager {
                 location.getPitch()
         );
 
-        this.locationsList.add(new Locations(name, location));
-
-        return resultSet == null;
+        int idx = -1;
+        for (int i = 0; i < this.locationsList.size(); i++) {
+            if (this.locationsList.get(i).getName().equalsIgnoreCase(name)) {
+                idx = i; break;
+            }
+        }
+        if (idx >= 0) {
+            this.locationsList.set(idx, new Locations(name, location));
+        } else {
+            this.locationsList.add(new Locations(name, location));
+        }
+        return true;
     }
 
     public boolean areLocationsEqual(Location location1, Location location2) {
@@ -98,7 +109,7 @@ public class LocationManager {
                      z DOUBLE NOT NULL,
                      yaw FLOAT NOT NULL,
                      pitch FLOAT NOT NULL
-                 )
-                """);
+                 );
+               """);
     }
 }
