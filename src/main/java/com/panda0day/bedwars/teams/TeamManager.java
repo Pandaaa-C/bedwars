@@ -21,8 +21,7 @@ public class TeamManager {
     }
 
     public void loadTeams() {
-        ResultSet  resultSet = Main.getDatabase().executeQuery("SELECT * FROM teams;");
-
+        ResultSet resultSet = Main.getDatabase().executeQuery("SELECT * FROM teams;");
         try {
             while (resultSet.next()) {
                 String name = resultSet.getString("name");
@@ -114,6 +113,7 @@ public class TeamManager {
 
     public void assignPlayerToTeam(Player player) {
         for (Team team : teams) {
+            Main.getInstance().getLogger().info(team.getName());
             if (team.getPlayers().size() < Main.getGameStateManager().getCurrentMap().getMaxPlayersPerTeam()) {
                 team.addPlayer(player);
                 updateTeam(team);

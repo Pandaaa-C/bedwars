@@ -71,7 +71,10 @@ public class Main extends JavaPlugin {
         gameStateManager.setCurrentGameState(GameState.LOBBY);
 
         Locations location = getLocationManager().getLocation("spawn");
-        if (location == null || location.getLocation().getWorld() == null) return;
+        if (location == null || location.getLocation().getWorld() == null) {
+            getLogger().info("Spawn location has not been set yet!");
+            return;
+        }
 
         worldManager.loadWorld(location.getLocation().getWorld().getName());
         worldManager.checkAndRestoreBackup(gameStateManager.getCurrentMap().getMapWorld(), gameStateManager.getCurrentMap().getMapWorld() + "_backup");
