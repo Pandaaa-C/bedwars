@@ -3,6 +3,7 @@ package com.panda0day.bedwars.teams;
 import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.map.Maps;
 import com.panda0day.bedwars.location.LocationManager;
+import com.panda0day.bedwars.utils.BedUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -52,7 +53,9 @@ public class TeamManager {
                         Bukkit.getWorld(map.getMapWorld()),
                         resultSet.getDouble("bedX"),
                         resultSet.getDouble("bedY"),
-                        resultSet.getDouble("bedZ")
+                        resultSet.getDouble("bedZ"),
+                        resultSet.getFloat("bedYaw"),
+                        resultSet.getFloat("bedPitch")
                 );
 
                 this.teams.add(new Team(
@@ -66,6 +69,7 @@ public class TeamManager {
                         bedLocation
                 ));
 
+                BedUtil.placeBed(bedLocation, Material.RED_BED, bedLocation.getYaw());
                 Main.getInstance().getLogger().info("[TeamManager] Team " + name + " has been loaded");
             }
         } catch (Exception exception) {
