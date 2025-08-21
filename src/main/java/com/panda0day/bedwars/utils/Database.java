@@ -33,7 +33,7 @@ public class Database {
             return;
         }
 
-        String url = "jdbc:mysql://" + host + ":" + port + "/" + databaseName;
+        String url = "jdbc:mysql://" + host + ":" + port + "/" + databaseName + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8";
 
         try {
             this.connection = DriverManager.getConnection(url, user, password);
