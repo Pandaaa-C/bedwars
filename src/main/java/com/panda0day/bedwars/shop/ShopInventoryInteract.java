@@ -6,6 +6,7 @@ import com.panda0day.bedwars.utils.InventoryManager;
 import com.panda0day.bedwars.utils.ItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -80,6 +81,7 @@ public class ShopInventoryInteract {
                                 .setAmount(item.getAmount())
                                 .create()
                 );
+                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 0.5f, 0.5f);
             }
         }
     }
