@@ -28,7 +28,7 @@ public class ShopInventory {
         player.openInventory(inventory);
     }
 
-    public static void openBlocksInventory(Player player) {
+    /*public static void openBlocksInventory(Player player) {
         Team team = Main.getTeamManager().getTeamFromPlayer(player);
         if (team == null) return;
 
@@ -118,5 +118,5 @@ public class ShopInventory {
         );
 
         player.openInventory(inventory);
-    }
+    }*/
 }

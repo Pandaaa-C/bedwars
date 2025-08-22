@@ -20,7 +20,6 @@ public class ItemClick implements Listener {
         }
 
         ShopInventoryInteract.onShopInventoryInteract(event);
-        ShopInventoryInteract.onBlocksInventoryInteract(event);
-        ShopInventoryInteract.onToolsInventoryInteract(event);
+        ShopInventoryInteract.onShopItemInteract(event);
     }
 }

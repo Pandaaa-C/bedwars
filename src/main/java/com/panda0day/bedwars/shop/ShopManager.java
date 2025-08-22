@@ -22,11 +22,13 @@ public class ShopManager {
         try {
             ResultSet resultSet = Main.getDatabase().executeQuery("SELECT * FROM shop_category");
             while (resultSet.next()) {
+                int categoryId = resultSet.getInt("id");
                 String categoryName = resultSet.getString("name");
                 String categoryItemId = resultSet.getString("item_id");
                 String[] categoryDescription = resultSet.getString("description").split(";");
 
                 shopItemCategories.add(new ShopItemCategory(
+                        categoryId,
                         categoryName,
                         new ItemManager(Material.getMaterial(categoryItemId))
                                 .setDisplayName(categoryName)
@@ -81,6 +83,7 @@ public class ShopManager {
                      item_name VARCHAR(255) NOT NULL UNIQUE,
                      item_id VARCHAR(255) NOT NULL,
                      currency_id VARCHAR(255) NOT NULL,
+                     category_id VARCHAR(255) NOT NULL,
                      amount INT(32) NOT NULL,
                      price INT(32) NOT NULL
                  )
