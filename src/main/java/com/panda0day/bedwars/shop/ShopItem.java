@@ -3,6 +3,8 @@ package com.panda0day.bedwars.shop;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class ShopItem {
     private final String name;
     private final int amount;

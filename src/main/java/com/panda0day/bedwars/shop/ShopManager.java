@@ -47,6 +47,7 @@ public class ShopManager {
             while (resultSet.next()) {
                 String displayName = resultSet.getString("item_name");
                 String itemID = resultSet.getString("item_id");
+                String itemDescription = resultSet.getString("item_description");
                 int amount = resultSet.getInt("amount");
                 int price = resultSet.getInt("price");
                 String currencyId = resultSet.getString("currency_id");
@@ -57,6 +58,7 @@ public class ShopManager {
                         amount,
                         new ItemManager(Material.getMaterial(itemID))
                                 .setDisplayName(displayName)
+                                .setLore(Arrays.asList(itemDescription.split(";")))
                                 .create(),
                         price,
                         Material.getMaterial(currencyId),
@@ -82,6 +84,7 @@ public class ShopManager {
                      id INT AUTO_INCREMENT PRIMARY KEY,
                      item_name VARCHAR(255) NOT NULL UNIQUE,
                      item_id VARCHAR(255) NOT NULL,
+                     item_description VARCHAR(255) NOT NULL,
                      currency_id VARCHAR(255) NOT NULL,
                      category_id VARCHAR(255) NOT NULL,
                      amount INT(32) NOT NULL,
