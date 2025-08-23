@@ -2,6 +2,7 @@ package com.panda0day.bedwars.shop;
 
 import com.panda0day.bedwars.Main;
 import com.panda0day.bedwars.utils.ItemManager;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 import java.sql.ResultSet;
@@ -31,7 +32,7 @@ public class ShopManager {
                         categoryId,
                         categoryName,
                         new ItemManager(Material.getMaterial(categoryItemId))
-                                .setDisplayName(categoryName)
+                                .setDisplayName(ChatColor.translateAlternateColorCodes('&', categoryName))
                                 .create(),
                         Arrays.stream(categoryDescription).toList()
                 ));
@@ -57,7 +58,7 @@ public class ShopManager {
                         displayName,
                         amount,
                         new ItemManager(Material.getMaterial(itemID))
-                                .setDisplayName(displayName)
+                                .setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName))
                                 .setLore(Arrays.asList(itemDescription.split(";")))
                                 .create(),
                         price,

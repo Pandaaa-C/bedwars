@@ -16,73 +16,91 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ShopInventoryInteract {
     public static void onShopInventoryInteract(InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof Player)) return;
         if (!event.getView().getTitle().equalsIgnoreCase("Shop")) return;
+        if (event.getClickedInventory() == null || event.getClickedInventory() != event.getView().getTopInventory()) return;
+
         event.setCancelled(true);
 
         Player player = (Player) event.getWhoClicked();
         ItemStack clickedItem = event.getCurrentItem();
-        if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+        if (clickedItem == null || clickedItem.getType().isAir()) return;
 
-        ItemMeta clickedItemMeta = clickedItem.getItemMeta();
-        if (clickedItemMeta == null) return;
+        ItemMeta meta = clickedItem.getItemMeta();
+        if (meta == null) return;
 
-        int categoryId = Main.getShopManager().getShopItemCategories()
+        Optional<ShopItemCategory> optCat = Main.getShopManager().getShopItemCategories()
                 .stream()
-                .filter(x -> x.getCategoryItem().getType() == clickedItem.getType())
-                .findFirst()
-                .get()
-                .getCategoryId();
+                .filter(x -> x.getCategoryItem() != null && x.getCategoryItem().getType() == clickedItem.getType())
+                .findFirst();
+
+        if (optCat.isEmpty()) return;
+        ShopItemCategory category = optCat.get();
 
         List<ShopItem> items = Main.getShopManager().getShopItems()
                 .stream()
-                .filter(x -> x.getCategoryId() == categoryId)
+                .filter(x -> x.getCategoryId() == category.getCategoryId())
                 .toList();
-        if (items.size() <= 0) return;
 
-        Inventory inventory = Bukkit.createInventory(player, 9 * 4, clickedItemMeta.getDisplayName());
-        items.stream().map(ShopItem::getItem).forEach(inventory::addItem);
+        if (items.isEmpty()) return;
 
-        player.openInventory(inventory);
+        Inventory inv = Bukkit.createInventory(player, 9 * 4, category.getCategoryName());
+        for (ShopItem si : items) {
+            if (si.getItem() != null) inv.addItem(si.getItem());
+        }
+
+        player.openInventory(inv);
     }
 
     public static void onShopItemInteract(InventoryClickEvent event) {
-        ShopItemCategory category = Main.getShopManager().getShopItemCategories()
+        if (!(event.getWhoClicked() instanceof Player)) return;
+        if (event.getClickedInventory() == null || event.getView().getTopInventory() != event.getClickedInventory()) return;
+
+        Optional<ShopItemCategory> optCat = Main.getShopManager().getShopItemCategories()
                 .stream()
                 .filter(x -> x.getCategoryName().equalsIgnoreCase(event.getView().getTitle()))
-                .findFirst()
-                .get();
-        if (category == null) return;
+                .findFirst();
+        if (optCat.isEmpty()) return;
+        ShopItemCategory category = optCat.get();
+
         event.setCancelled(true);
 
-        Player player = (Player) event.getWhoClicked();
         ItemStack clickedItem = event.getCurrentItem();
-        if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+        if (clickedItem == null || clickedItem.getType().isAir()) return;
+        ItemMeta clickedMeta = clickedItem.getItemMeta();
+        String clickedName = clickedMeta != null && clickedMeta.hasDisplayName() ? org.bukkit.ChatColor.stripColor(clickedMeta.getDisplayName()) : null;
 
-        ItemMeta clickedItemMeta = clickedItem.getItemMeta();
-        if (clickedItemMeta == null) return;
-
-        ShopItem item = Main.getShopManager().getShopItems()
+        List<ShopItem> candidates = Main.getShopManager().getShopItems()
                 .stream()
-                .filter(x -> x.getItem().getType() == clickedItem.getType() && x.getCategoryId() == category.getCategoryId())
-                .findFirst()
-                .get();
-        if (item == null) return;
+                .filter(x -> x.getCategoryId() == category.getCategoryId())
+                .filter(x -> x.getItem() != null && x.getItem().getType() == clickedItem.getType())
+                .toList();
+        if (candidates.isEmpty()) return;
 
-        if (InventoryManager.hasItemCount(player.getInventory(), item.getCurrency(), item.getPrice())) {
-            if (InventoryManager.removeItemCount(player,  item.getCurrency(), item.getPrice())) {
-                Team playerTeam = Main.getTeamManager().getTeamFromPlayer(player);
-                if (playerTeam == null) return;
-
-                player.getInventory().addItem(
-                        new ItemManager(item.getItem().getType())
-                                .setAmount(item.getAmount())
-                                .create()
-                );
-                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 0.5f, 0.5f);
-            }
+        ShopItem item;
+        if (candidates.size() == 1) {
+            item = candidates.get(0);
+        } else {
+            item = candidates.stream().filter(x -> {
+                ItemMeta m = x.getItem().getItemMeta();
+                String n = (m != null && m.hasDisplayName()) ? org.bukkit.ChatColor.stripColor(m.getDisplayName()) : null;
+                return n != null && n.equalsIgnoreCase(clickedName);
+            }).findFirst().orElse(null);
+            if (item == null) return;
         }
+
+        Player player = (Player) event.getWhoClicked();
+        if (!InventoryManager.hasItemCount(player.getInventory(), item.getCurrency(), item.getPrice())) return;
+        if (!InventoryManager.removeItemCount(player, item.getCurrency(), item.getPrice())) return;
+
+        Team playerTeam = Main.getTeamManager().getTeamFromPlayer(player);
+        if (playerTeam == null) return;
+
+        player.getInventory().addItem(new ItemManager(item.getItem().getType()).setAmount(item.getAmount()).create());
+        player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 0.5f, 0.5f);
     }
 }
